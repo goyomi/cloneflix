@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled.nav`
@@ -11,7 +12,7 @@ const Nav = styled.nav`
   justify-content: space-between;
   align-items: center;
   background-color: black;
-  font: 1.2rem;
+  font-size: 1.4rem;
 `;
 
 const Col = styled.div`
@@ -36,7 +37,20 @@ const Items = styled.ul`
 
 const Item = styled.li`
   margin-right: 2rem;
+  position: relative;
   color: ${(props) => props.theme.white.darker};
+`;
+
+const Circle = styled.span`
+  width: 0.5rem;
+  height: 0.5rem;
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+  background-color: ${(props) => props.theme.red};
 `;
 
 const logoVariants = {
@@ -49,6 +63,9 @@ const logoVariants = {
 };
 
 function Header() {
+  const homeMatch = useRouteMatch("/");
+  const tvMatch = useRouteMatch("/tv");
+  console.log(homeMatch, tvMatch);
   return (
     <Nav>
       <Col>
@@ -61,8 +78,14 @@ function Header() {
           />
         </Logo>
         <Items>
-          <Item>Home</Item>
-          <Item>Tv Shows</Item>
+          <Item>
+            <Link to="/">Home</Link>
+            {homeMatch?.isExact && <Circle />}
+          </Item>
+          <Item>
+            <Link to="/tv">Tv Shows</Link>
+            {tvMatch?.isExact && <Circle />}
+          </Item>
         </Items>
       </Col>
       <Col>
