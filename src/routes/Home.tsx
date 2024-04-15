@@ -3,6 +3,8 @@ import { getMovies } from "../api";
 import { IGetMovies } from "../type";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 const HomeContainer = styled.div`
   background-color: black;
@@ -37,19 +39,84 @@ const Overview = styled.p`
   line-height: calc(1.6rem * 1.3);
 `;
 
+const Slider = styled.section`
+  position: relative;
+  top: -10rem;
+`;
+
+const Row = styled(motion.div)`
+  width: 100%;
+  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+`;
+
+const Card = styled(motion.div)<{ bgPhoto: string }>`
+  height: 200px;
+  background-image: url(${(props) => props.bgPhoto});
+  background-position: center center;
+  background-size: cover;
+`;
+
+const rowVariants = {
+  hidden: {
+    x: window.outerWidth,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: {
+    x: -window.outerWidth,
+  },
+};
+
+const offset = 6;
+
 function Home() {
   const { data, isLoading } = useQuery<IGetMovies>(["movies", "nowPlaying"], getMovies);
-  console.log(data, isLoading);
+  const [index, setIndex] = useState(0);
+  const [leaving, setLeaving] = useState(false);
+  const increaseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
+  };
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+
   return (
     <HomeContainer>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
+          <Banner onClick={increaseIndex} bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
+          <Slider>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+              <Row
+                variants={rowVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ type: "tween", duration: 0.5 }}
+                key={index}
+              >
+                {data?.results
+                  .slice(1)
+                  .slice(offset * index, offset * index + offset)
+                  .map((movie) => (
+                    <Card key={movie.id} bgPhoto={makeImagePath(movie.backdrop_path)} />
+                  ))}
+              </Row>
+            </AnimatePresence>
+          </Slider>
         </>
       )}
     </HomeContainer>
