@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const HomeContainer = styled.div`
   background-color: black;
@@ -56,6 +57,7 @@ const Card = styled(motion.div)`
   width: 100%;
   height: 20rem;
   background-color: ${(props) => props.theme.black.lighter};
+  cursor: pointer;
   &:first-child {
     transform-origin: left;
   }
@@ -78,6 +80,49 @@ const Info = styled(motion.h4)`
   text-align: center;
   background-color: ${(props) => props.theme.black.lighter};
   opacity: 0;
+`;
+
+const Overlay = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+`;
+
+const Modal = styled(motion.div)`
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 40vw;
+  height: 80vh;
+  transform: translateY(-50%);
+  background-color: ${(props) => props.theme.black.lighter};
+  border-radius: 0.5rem;
+  overflow: hidden;
+`;
+
+const ModalImage = styled.div`
+  width: 100%;
+  height: calc(80vh / 2);
+  background-position: center center;
+  background-size: cover;
+`;
+
+const ModalTitle = styled.h2`
+  padding: 1.5rem;
+  margin-top: -6rem;
+  font-size: 3.5rem;
+`;
+
+const ModalOverview = styled.p`
+  padding: 1.5rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
 `;
 
 const rowVariants = {
@@ -107,6 +152,11 @@ function Home() {
   const { data, isLoading } = useQuery<IGetMovies>(["movies", "nowPlaying"], getMovies);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const history = useHistory<{ movieId: string }>();
+  const movieIdMatch = useRouteMatch<{ movieId: string }>("/movie/:movieId");
+  const clickedMovie =
+    movieIdMatch?.params.movieId && data?.results.find((movie) => String(movie.id) === movieIdMatch.params.movieId);
+  console.log(clickedMovie);
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -117,6 +167,8 @@ function Home() {
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
+  const onCardClicked = (movieId: string) => history.push(`/movie/${movieId}`);
+  const onOverlayClicked = () => history.push("/");
 
   return (
     <HomeContainer>
@@ -143,11 +195,13 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <Card
+                      onClick={() => onCardClicked(movie.id)}
                       key={movie.id}
                       variants={cardVariants}
                       initial="normal"
                       whileHover="hover"
                       transition={{ type: "tween" }}
+                      layoutId={movie.id}
                     >
                       <MovieImage src={makeImagePath(movie.backdrop_path)} />
                       <Info variants={infoVariants}>{movie.title}</Info>
@@ -156,6 +210,28 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {movieIdMatch ? (
+              <>
+                <Overlay onClick={onOverlayClicked} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+                <Modal layoutId={movieIdMatch.params.movieId}>
+                  {clickedMovie && (
+                    <>
+                      <ModalImage
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                            clickedMovie.backdrop_path
+                          )})`,
+                        }}
+                      />
+                      <ModalTitle>{clickedMovie.title}</ModalTitle>
+                      <ModalOverview>{clickedMovie.overview}</ModalOverview>
+                    </>
+                  )}
+                </Modal>
+              </>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </HomeContainer>
