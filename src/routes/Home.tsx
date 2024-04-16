@@ -52,11 +52,32 @@ const Row = styled(motion.div)`
   gap: 1rem;
 `;
 
-const Card = styled(motion.div)<{ bgPhoto: string }>`
-  height: 200px;
-  background-image: url(${(props) => props.bgPhoto});
-  background-position: center center;
-  background-size: cover;
+const Card = styled(motion.div)`
+  width: 100%;
+  height: 20rem;
+  background-color: ${(props) => props.theme.black.lighter};
+  &:first-child {
+    transform-origin: left;
+  }
+  &:last-child {
+    transform-origin: right;
+  }
+`;
+
+const MovieImage = styled(motion.img)<{ src: string }>`
+  width: 100%;
+  height: 20rem;
+  object-fit: cover;
+`;
+
+const Info = styled(motion.h4)`
+  width: 100%;
+  padding: 2rem;
+  height: 5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
 `;
 
 const rowVariants = {
@@ -69,6 +90,15 @@ const rowVariants = {
   exit: {
     x: -window.outerWidth,
   },
+};
+
+const cardVariants = {
+  normal: { scale: 1 },
+  hover: { scale: 1.3, y: -50, transition: { type: "tween", delay: 0.2, duration: 0.3 }, zIndex: 10, ease: "linear" },
+};
+
+const infoVariants = {
+  hover: { opacity: 1 },
 };
 
 const offset = 6;
@@ -105,14 +135,23 @@ function Home() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                transition={{ type: "tween", duration: 0.5 }}
+                transition={{ duration: 0.8, ease: "linear" }}
                 key={index}
               >
                 {data?.results
                   .slice(1)
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
-                    <Card key={movie.id} bgPhoto={makeImagePath(movie.backdrop_path)} />
+                    <Card
+                      key={movie.id}
+                      variants={cardVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
+                    >
+                      <MovieImage src={makeImagePath(movie.backdrop_path)} />
+                      <Info variants={infoVariants}>{movie.title}</Info>
+                    </Card>
                   ))}
               </Row>
             </AnimatePresence>
