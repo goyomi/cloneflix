@@ -1,6 +1,7 @@
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled(motion.nav)`
@@ -54,7 +55,7 @@ const Circle = styled(motion.span)`
   background-color: ${(props) => props.theme.red};
 `;
 
-const SearchBar = styled(motion.span)`
+const SearchBar = styled(motion.form)`
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -80,6 +81,10 @@ const navVariants = {
   top: { backgroundColor: "rgba(0,0,0,0)" },
   scroll: { backgroundColor: "rgba(0,0,0,1)" },
 };
+
+interface IForm {
+  keyword: string;
+}
 
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -107,6 +112,12 @@ function Header() {
     setSearchOpen((prev) => !prev);
   };
 
+  const history = useHistory();
+  const { register, handleSubmit } = useForm<IForm>();
+  const onValid = (data: IForm) => {
+    history.push(`/search?keyword=${data.keyword}`);
+  };
+
   return (
     <Nav variants={navVariants} initial="top" animate={scrollAnimation}>
       <Col>
@@ -130,8 +141,9 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <SearchBar>
+        <SearchBar onSubmit={handleSubmit(onValid)}>
           <Input
+            {...register("keyword", { required: true, minLength: 2 })}
             animate={inputAnimation}
             transition={{ ease: "linear" }}
             type="text"
