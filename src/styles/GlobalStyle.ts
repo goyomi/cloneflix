@@ -21,7 +21,7 @@ time, mark, audio, video {
   font-weight: normal;
 	font: inherit;
 	vertical-align: baseline;
-	color: ${(props) => props.theme.mainFontColor};
+	color: ${(props) => props.theme.white.darker};
 }
 
 article, aside, details, figcaption, figure, 
@@ -40,7 +40,7 @@ html{
 
 body {
 	line-height: 1;
-	background-color: ${(props) => props.theme.backgroundColor};
+	background-color: black;
 }
 
 ol, ul {

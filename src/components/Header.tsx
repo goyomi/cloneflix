@@ -133,7 +133,7 @@ function Header() {
         <SearchBar>
           <Input
             animate={inputAnimation}
-            transition={{ type: "linear" }}
+            transition={{ ease: "linear" }}
             type="text"
             placeholder="search for movie or tv show"
           />
