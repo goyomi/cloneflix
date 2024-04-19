@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { IGetMovies } from "../type";
 import { makeImagePath } from "../utils";
+import MovieModal from "./Modal";
+import { useNavigate } from "react-router-dom";
 
 const Slider = styled.section`
   position: relative;
@@ -47,59 +48,28 @@ const Info = styled(motion.h4)`
   opacity: 0;
 `;
 
-const Overlay = styled(motion.div)`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
-const Modal = styled(motion.div)`
-  position: fixed;
-  top: 50%;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 40vw;
-  height: 80vh;
+const IndexButton = styled(motion.button)<{ way: string }>`
+  position: absolute;
+  left: ${(props) => props.way === "left" && 0};
+  right: ${(props) => props.way === "right" && 0};
+  top: 10rem;
   transform: translateY(-50%);
-  background-color: ${(props) => props.theme.black.lighter};
-  border-radius: 0.5rem;
-  overflow: hidden;
-`;
-
-const ModalImage = styled.div`
-  width: 100%;
-  height: calc(80vh / 2);
-  background-position: center center;
-  background-size: cover;
-`;
-
-const ModalTitle = styled.h2`
-  padding: 1.5rem;
-  margin-top: -6rem;
-  font-size: 3.5rem;
-`;
-
-const ModalOverview = styled.p`
-  padding: 1.5rem;
-  font-size: 1.5rem;
-  line-height: 2rem;
+  height: 20rem;
+  font-size: 5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
 `;
 
 const rowVariants = {
-  hidden: {
-    x: window.outerWidth,
-  },
+  hidden: (direction: string) => ({
+    x: direction === "right" ? window.outerWidth : -window.outerWidth,
+  }),
   visible: {
     x: 0,
   },
-  exit: {
-    x: -window.outerWidth,
-  },
+  exit: (direction: string) => ({
+    x: direction === "right" ? -window.outerWidth : window.outerWidth,
+  }),
 };
 
 const cardVariants = {
@@ -116,33 +86,33 @@ const offset = 6;
 function MovieSlider({ data }: { data: IGetMovies }) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
-  const movieIdMatch = useRouteMatch<{ movieId: string }>("/movie/:movieId");
-  const history = useHistory<{ movieId: string }>();
-  const clickedMovie =
-    movieIdMatch?.params.movieId && data?.results.find((movie) => String(movie.id) === movieIdMatch.params.movieId);
-  console.log(clickedMovie);
-  const increaseIndex = () => {
-    if (data) {
-      if (leaving) return;
-      toggleLeaving();
-      const totalMovies = data.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
+  const [direction, setDirection] = useState("right");
+  const navigate = useNavigate();
+
+  const variationIndex = (way: string) => {
+    if (leaving || !data) return;
+    toggleLeaving();
+    setDirection(way);
+    const totalMovies = data.results.length - 1;
+    const maxIndex = Math.floor(totalMovies / offset) - 1;
+    setIndex((prev) => (prev === maxIndex ? 0 : way === "right" ? prev + 1 : prev - 1));
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onCardClicked = (movieId: string) => history.push(`/movie/${movieId}`);
-  const onOverlayClicked = () => history.push("/");
+  const onCardClicked = (movieId: string) => navigate(`/movie/${movieId}`);
 
   return (
     <>
       <Slider>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+          <IndexButton onClick={() => variationIndex("left")} way={"left"}>
+            {"<"}
+          </IndexButton>
           <Row
             variants={rowVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
+            custom={direction}
             transition={{ duration: 0.8, ease: "linear" }}
             key={index}
           >
@@ -164,30 +134,12 @@ function MovieSlider({ data }: { data: IGetMovies }) {
                 </Card>
               ))}
           </Row>
+          <IndexButton onClick={() => variationIndex("right")} way={"right"}>
+            {">"}
+          </IndexButton>
         </AnimatePresence>
       </Slider>
-      <AnimatePresence>
-        {movieIdMatch ? (
-          <>
-            <Overlay onClick={onOverlayClicked} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-            <Modal layoutId={movieIdMatch.params.movieId}>
-              {clickedMovie && (
-                <>
-                  <ModalImage
-                    style={{
-                      backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                        clickedMovie.backdrop_path
-                      )})`,
-                    }}
-                  />
-                  <ModalTitle>{clickedMovie.title}</ModalTitle>
-                  <ModalOverview>{clickedMovie.overview}</ModalOverview>
-                </>
-              )}
-            </Modal>
-          </>
-        ) : null}
-      </AnimatePresence>
+      <MovieModal data={data} />
     </>
   );
 }
