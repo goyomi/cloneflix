@@ -3,10 +3,11 @@ import { getMovies } from "../api";
 import { IGetMovies } from "../type";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import MovieSlider from "../components/MovieSlider";
+import MovieSlider from "../components/Slider";
 
 const HomeContainer = styled.div`
   background-color: black;
+  overflow-x: hidden;
 `;
 
 const Loader = styled.div`

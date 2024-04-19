@@ -1,7 +1,7 @@
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled(motion.nav)`
@@ -88,8 +88,8 @@ interface IForm {
 
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const homeMatch = useRouteMatch("/");
-  const tvMatch = useRouteMatch("/tv");
+  const homeMatch = useMatch("/");
+  const tvMatch = useMatch("/tv");
   const inputAnimation = useAnimation();
   const scrollAnimation = useAnimation();
   const { scrollY } = useScroll();
@@ -112,11 +112,12 @@ function Header() {
     setSearchOpen((prev) => !prev);
   };
 
-  const history = useHistory();
+  const history = useNavigate();
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {
-    history.push(`/search?keyword=${data.keyword}`);
+    history(`/search?keyword=${data.keyword}`);
   };
+  console.log(tvMatch);
 
   return (
     <Nav variants={navVariants} initial="top" animate={scrollAnimation}>
@@ -132,11 +133,11 @@ function Header() {
         <Items>
           <Item>
             <Link to="/">Home</Link>
-            {homeMatch?.isExact && <Circle layoutId="circleDot" />}
+            {homeMatch && <Circle layoutId="circleDot" />}
           </Item>
           <Item>
             <Link to="/tv">Tv Shows</Link>
-            {tvMatch?.isExact && <Circle layoutId="circleDot" />}
+            {tvMatch && <Circle layoutId="circleDot" />}
           </Item>
         </Items>
       </Col>
