@@ -95,15 +95,22 @@ function MovieSlider({ data }: { data: IGetMovies }) {
     setDirection(way);
     const totalMovies = data.results.length - 1;
     const maxIndex = Math.floor(totalMovies / offset) - 1;
-    setIndex((prev) => (prev === maxIndex ? 0 : way === "right" ? prev + 1 : prev - 1));
+    setIndex((prev) => {
+      if (way === "right") {
+        return prev === maxIndex ? 0 : prev + 1;
+      } else {
+        return prev === 0 ? maxIndex : prev - 1;
+      }
+    });
   };
+
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const onCardClicked = (movieId: string) => navigate(`/movie/${movieId}`);
 
   return (
     <>
       <Slider>
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+        <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={direction}>
           <IndexButton onClick={() => variationIndex("left")} way={"left"}>
             {"<"}
           </IndexButton>
