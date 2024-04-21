@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
-import { getMovies } from "../api";
+import { getMovies, getTopRatedMovies, getUpcomingMovies } from "../api";
 import { IGetMovies } from "../type";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import MovieSlider from "../components/Slider";
+import Slider from "../components/Slider";
 
 const HomeContainer = styled.div`
   background-color: black;
@@ -40,7 +40,11 @@ const Overview = styled.p`
 `;
 
 function Home() {
-  const { data, isLoading } = useQuery<IGetMovies>(["movies", "nowPlaying"], getMovies);
+  const { data, isLoading: nowPlayingIsLoading } = useQuery<IGetMovies>(["movies", "nowPlaying"], getMovies);
+  const { data: topRatedData, isLoading: topRatedIsLoading } = useQuery(["movies", "topRated"], getTopRatedMovies);
+  const { data: upcomingData, isLoading: upcomingIsLoading } = useQuery(["movies", "upcoming"], getUpcomingMovies);
+
+  const isLoading = nowPlayingIsLoading || topRatedIsLoading || upcomingIsLoading;
 
   return (
     <HomeContainer>
@@ -52,7 +56,9 @@ function Home() {
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
-          {data ? <MovieSlider data={data} /> : null}
+          {data ? <Slider data={data} title="Now Playing" /> : null}
+          {topRatedData ? <Slider data={topRatedData} title="Top Rated" /> : null}
+          {upcomingData ? <Slider data={upcomingData} title="Upcoming" /> : null}
         </>
       )}
     </HomeContainer>

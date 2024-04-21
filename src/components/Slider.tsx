@@ -6,9 +6,30 @@ import { makeImagePath } from "../utils";
 import MovieModal from "./Modal";
 import { useNavigate } from "react-router-dom";
 
-const Slider = styled.section`
+const SliderContainer = styled.section`
   position: relative;
   top: -10rem;
+  margin-bottom: 26.5rem;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const SliderTitle = styled.h3`
+  padding: 2rem 1rem;
+  font-size: 2.5rem;
+`;
+
+const IndexButton = styled(motion.button)<{ way: string }>`
+  position: absolute;
+  left: ${(props) => props.way === "left" && 0};
+  right: ${(props) => props.way === "right" && 0};
+  top: 16.5rem;
+  transform: translateY(-50%);
+  height: 20rem;
+  font-size: 5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
 `;
 
 const Row = styled(motion.div)`
@@ -48,18 +69,6 @@ const Info = styled(motion.h4)`
   opacity: 0;
 `;
 
-const IndexButton = styled(motion.button)<{ way: string }>`
-  position: absolute;
-  left: ${(props) => props.way === "left" && 0};
-  right: ${(props) => props.way === "right" && 0};
-  top: 10rem;
-  transform: translateY(-50%);
-  height: 20rem;
-  font-size: 5rem;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 10;
-`;
-
 const rowVariants = {
   hidden: (direction: string) => ({
     x: direction === "right" ? window.outerWidth : -window.outerWidth,
@@ -83,7 +92,7 @@ const infoVariants = {
 
 const offset = 6;
 
-function MovieSlider({ data }: { data: IGetMovies }) {
+function Slider({ data, title }: { data: IGetMovies; title: string }) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState("right");
@@ -109,7 +118,8 @@ function MovieSlider({ data }: { data: IGetMovies }) {
 
   return (
     <>
-      <Slider>
+      <SliderContainer>
+        <SliderTitle>{title}</SliderTitle>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={direction}>
           <IndexButton onClick={() => variationIndex("left")} way={"left"}>
             {"<"}
@@ -120,7 +130,7 @@ function MovieSlider({ data }: { data: IGetMovies }) {
             animate="visible"
             exit="exit"
             custom={direction}
-            transition={{ duration: 0.8, ease: "linear" }}
+            transition={{ type: "tween", duration: 0.8, ease: "linear" }}
             key={index}
           >
             {data?.results
@@ -145,10 +155,10 @@ function MovieSlider({ data }: { data: IGetMovies }) {
             {">"}
           </IndexButton>
         </AnimatePresence>
-      </Slider>
+      </SliderContainer>
       <MovieModal data={data} />
     </>
   );
 }
 
-export default MovieSlider;
+export default Slider;
