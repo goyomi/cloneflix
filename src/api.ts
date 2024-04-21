@@ -5,3 +5,15 @@ export function getMovies() {
   return fetch(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1
   `).then((response) => response.json());
 }
+
+export function getTopRatedMovies() {
+  return fetch(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=en-US&page=1`).then((response) =>
+    response.json()
+  );
+}
+
+export function getUpcomingMovies() {
+  return fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`).then((response) =>
+    response.json()
+  );
+}
