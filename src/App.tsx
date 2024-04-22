@@ -6,13 +6,13 @@ import Header from "./components/Header";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/cloneflix">
       <Header />
       <Routes>
         <Route path="/search" element={<Search />} />
         <Route path="/tv" element={<Tv />} />
         <Route path="/movie/:movieId" element={<Home />} />
-        <Route path={"/"} element={<Home />} />
+        <Route path="/" element={<Home />} />
       </Routes>
     </Router>
   );
