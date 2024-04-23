@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import { IGetMovies, IMovies } from "../type";
-import { useMatch, useNavigate } from "react-router-dom";
+import { IMovie } from "../type";
+import { useNavigate } from "react-router-dom";
 
 const Overlay = styled(motion.div)`
   width: 100%;
@@ -14,7 +14,7 @@ const Overlay = styled(motion.div)`
   opacity: 0;
 `;
 
-const Modal = styled(motion.div)`
+const ModalWrapper = styled(motion.div)`
   position: fixed;
   top: 50%;
   left: 0;
@@ -47,38 +47,33 @@ const ModalOverview = styled.p`
   line-height: 2rem;
 `;
 
-function MovieModal({ data }: { data: IGetMovies }) {
-  const movieIdMatch = useMatch("/movie/:movieId");
+function Modal({ clickedCard }: { clickedCard: IMovie | null }) {
   const navigate = useNavigate();
   const onOverlayClicked = () => navigate("/");
-  const clickedMovie =
-    movieIdMatch?.params.movieId &&
-    data?.results.find((movie: IMovies) => String(movie.id) === movieIdMatch.params.movieId);
-
   return (
     <AnimatePresence>
-      {movieIdMatch ? (
+      {clickedCard ? (
         <>
           <Overlay onClick={onOverlayClicked} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-          <Modal layoutId={movieIdMatch.params.movieId}>
-            {clickedMovie && (
+          <ModalWrapper layoutId={clickedCard.id}>
+            {clickedCard && (
               <>
                 <ModalImage
                   style={{
                     backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                      clickedMovie.backdrop_path
+                      clickedCard.backdrop_path
                     )})`,
                   }}
                 />
-                <ModalTitle>{clickedMovie.title}</ModalTitle>
-                <ModalOverview>{clickedMovie.overview}</ModalOverview>
+                <ModalTitle>{clickedCard.title}</ModalTitle>
+                <ModalOverview>{clickedCard.overview}</ModalOverview>
               </>
             )}
-          </Modal>
+          </ModalWrapper>
         </>
       ) : null}
     </AnimatePresence>
   );
 }
 
-export default MovieModal;
+export default Modal;

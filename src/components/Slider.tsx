@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
-import { IGetMovies } from "../type";
+import { IMovie } from "../type";
 import { makeImagePath } from "../utils";
-import MovieModal from "./Modal";
-import { useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
+import Modal from "./Modal";
+import { MovieDataContext } from "../context/DataContext";
 
 const SliderContainer = styled.section`
   position: relative;
@@ -92,18 +93,21 @@ const infoVariants = {
 
 const offset = 6;
 
-function Slider({ data, title }: { data: IGetMovies; title: string }) {
+function Slider({ title, category }: { title: string; category: string }) {
+  const { nowPlayingData, topRatedData, upcomingData } = useContext(MovieDataContext);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState("right");
   const navigate = useNavigate();
 
+  const data = category === "now_playing" ? nowPlayingData : category === "top_rated" ? topRatedData : upcomingData;
+
   const variationIndex = (way: string) => {
     if (leaving || !data) return;
     toggleLeaving();
     setDirection(way);
-    const totalMovies = data.results.length - 1;
-    const maxIndex = Math.floor(totalMovies / offset) - 1;
+    const totalMovie = data.results.length - 1;
+    const maxIndex = Math.floor(totalMovie / offset) - 1;
     setIndex((prev) => {
       if (way === "right") {
         return prev === maxIndex ? 0 : prev + 1;
@@ -114,7 +118,15 @@ function Slider({ data, title }: { data: IGetMovies; title: string }) {
   };
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onCardClicked = (movieId: string) => navigate(`/movie/${movieId}`);
+  const onCardClicked = (movieId: string) => navigate(`/movie/${category}/${movieId}`);
+
+  const movieIdMatch = useMatch("/movie/:category/:movieId");
+
+  const matchCard = data.results.filter((movie: IMovie) => String(movie.id) === movieIdMatch?.params.movieId);
+  let clickedCard = null;
+  if (matchCard.length > 0) {
+    clickedCard = matchCard[0];
+  }
 
   return (
     <>
@@ -156,7 +168,7 @@ function Slider({ data, title }: { data: IGetMovies; title: string }) {
           </IndexButton>
         </AnimatePresence>
       </SliderContainer>
-      <MovieModal data={data} />
+      <Modal clickedCard={clickedCard} />
     </>
   );
 }

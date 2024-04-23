@@ -1,9 +1,7 @@
-import { useQuery } from "react-query";
-import { getMovies, getTopRatedMovies, getUpcomingMovies } from "../api";
-import { IGetMovies } from "../type";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import Slider from "../components/Slider";
+import { MovieDataContext, MovieProvider } from "../context/DataContext";
 
 const HomeContainer = styled.div`
   background-color: black;
@@ -40,28 +38,26 @@ const Overview = styled.p`
 `;
 
 function Home() {
-  const { data, isLoading: nowPlayingIsLoading } = useQuery<IGetMovies>(["movies", "nowPlaying"], getMovies);
-  const { data: topRatedData, isLoading: topRatedIsLoading } = useQuery(["movies", "topRated"], getTopRatedMovies);
-  const { data: upcomingData, isLoading: upcomingIsLoading } = useQuery(["movies", "upcoming"], getUpcomingMovies);
-
-  const isLoading = nowPlayingIsLoading || topRatedIsLoading || upcomingIsLoading;
+  const { nowPlayingData, topRatedData, upcomingData, isLoading } = MovieProvider();
 
   return (
-    <HomeContainer>
-      {isLoading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <>
-          <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
-          </Banner>
-          {data ? <Slider data={data} title="Now Playing" /> : null}
-          {topRatedData ? <Slider data={topRatedData} title="Top Rated" /> : null}
-          {upcomingData ? <Slider data={upcomingData} title="Upcoming" /> : null}
-        </>
-      )}
-    </HomeContainer>
+    <MovieDataContext.Provider value={{ nowPlayingData, topRatedData, upcomingData, isLoading }}>
+      <HomeContainer>
+        {isLoading ? (
+          <Loader>Loading...</Loader>
+        ) : (
+          <>
+            <Banner bgPhoto={makeImagePath(nowPlayingData?.results[0].backdrop_path || "")}>
+              <Title>{nowPlayingData?.results[0].title}</Title>
+              <Overview>{nowPlayingData?.results[0].overview}</Overview>
+            </Banner>
+            <Slider title="Now Playing" category="now_playing" />
+            <Slider title="Top Rated" category="top_rated" />
+            <Slider title="Upcoming" category="upcoming" />
+          </>
+        )}
+      </HomeContainer>
+    </MovieDataContext.Provider>
   );
 }
 
