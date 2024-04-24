@@ -51,9 +51,9 @@ function Home() {
               <Title>{nowPlayingData?.results[0].title}</Title>
               <Overview>{nowPlayingData?.results[0].overview}</Overview>
             </Banner>
-            <Slider title="Now Playing" category="now_playing" />
-            <Slider title="Top Rated" category="top_rated" />
-            <Slider title="Upcoming" category="upcoming" />
+            <Slider title="Now Playing" section="movie" category="now_playing" />
+            <Slider title="Top Rated" section="movie" category="top_rated" />
+            <Slider title="Upcoming" section="movie" category="upcoming" />
           </>
         )}
       </HomeContainer>
