@@ -38,10 +38,10 @@ const Overview = styled.p`
 `;
 
 function Home() {
-  const { nowPlayingData, topRatedData, upcomingData, isLoading } = MovieProvider();
+  const { nowPlayingData, popularData, topRatedData, upcomingData, isLoading } = MovieProvider();
 
   return (
-    <MovieDataContext.Provider value={{ nowPlayingData, topRatedData, upcomingData, isLoading }}>
+    <MovieDataContext.Provider value={{ nowPlayingData, popularData, topRatedData, upcomingData, isLoading }}>
       <HomeContainer>
         {isLoading ? (
           <Loader>Loading...</Loader>
@@ -52,6 +52,7 @@ function Home() {
               <Overview>{nowPlayingData?.results[0].overview}</Overview>
             </Banner>
             <Slider title="Now Playing" section="movie" category="now_playing" />
+            <Slider title="Popular" section="movie" category="popular" />
             <Slider title="Top Rated" section="movie" category="top_rated" />
             <Slider title="Upcoming" section="movie" category="upcoming" />
           </>

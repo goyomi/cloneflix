@@ -38,10 +38,10 @@ const Overview = styled.p`
 `;
 
 function Tv() {
-  const { airingTodayData, onTheAirData, popularData, tvTopRatedData, isLoading } = TvShowProvider();
+  const { airingTodayData, onTheAirData, tvPopularData, tvTopRatedData, isLoading } = TvShowProvider();
 
   return (
-    <TvShowDataContext.Provider value={{ airingTodayData, onTheAirData, popularData, tvTopRatedData, isLoading }}>
+    <TvShowDataContext.Provider value={{ airingTodayData, onTheAirData, tvPopularData, tvTopRatedData, isLoading }}>
       <HomeContainer>
         {isLoading ? (
           <Loader>Loading...</Loader>

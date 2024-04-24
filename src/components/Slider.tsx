@@ -100,8 +100,8 @@ interface ISlider {
 }
 
 function Slider({ title, section, category }: ISlider) {
-  const { nowPlayingData, topRatedData, upcomingData } = useContext(MovieDataContext);
-  const { airingTodayData, onTheAirData, popularData, tvTopRatedData } = useContext(TvShowDataContext);
+  const { nowPlayingData, popularData, topRatedData, upcomingData } = useContext(MovieDataContext);
+  const { airingTodayData, onTheAirData, tvPopularData, tvTopRatedData } = useContext(TvShowDataContext);
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -114,6 +114,9 @@ function Slider({ title, section, category }: ISlider) {
     switch (category) {
       case "now_playing":
         data = nowPlayingData;
+        break;
+      case "popular":
+        data = popularData;
         break;
       case "top_rated":
         data = topRatedData;
@@ -133,7 +136,7 @@ function Slider({ title, section, category }: ISlider) {
         data = onTheAirData;
         break;
       case "popular":
-        data = popularData;
+        data = tvPopularData;
         break;
       case "top_rated":
         data = tvTopRatedData;

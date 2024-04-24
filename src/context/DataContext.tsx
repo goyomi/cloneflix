@@ -5,6 +5,7 @@ import { IGetMovie, IGetTvShow } from "../type";
 
 interface IMovieDataContext {
   nowPlayingData: IGetMovie;
+  popularData: IGetMovie;
   topRatedData: IGetMovie;
   upcomingData: IGetMovie;
   isLoading: boolean;
@@ -12,6 +13,13 @@ interface IMovieDataContext {
 
 export const MovieDataContext = createContext<IMovieDataContext>({
   nowPlayingData: {
+    dates: { maximum: "", minimum: "" },
+    page: 0,
+    results: [],
+    total_pages: 0,
+    total_results: 0,
+  },
+  popularData: {
     dates: { maximum: "", minimum: "" },
     page: 0,
     results: [],
@@ -41,6 +49,11 @@ export const MovieProvider = () => {
     queryFn: () => getMovie("movie", "now_playing"),
   });
 
+  const { data: popularData, isLoading: popularIsLoading } = useQuery({
+    queryKey: ["movie", "popular"],
+    queryFn: () => getMovie("movie", "popular"),
+  });
+
   const { data: topRatedData, isLoading: topRatedIsLoading } = useQuery({
     queryKey: ["movie", "topRated"],
     queryFn: () => getMovie("movie", "top_rated"),
@@ -51,16 +64,16 @@ export const MovieProvider = () => {
     queryFn: () => getMovie("movie", "upcoming"),
   });
 
-  const isLoading = nowPlayingIsLoading || topRatedIsLoading || upcomingIsLoading;
+  const isLoading = nowPlayingIsLoading || popularIsLoading || topRatedIsLoading || upcomingIsLoading;
 
-  return { nowPlayingData, topRatedData, upcomingData, isLoading };
+  return { nowPlayingData, popularData, topRatedData, upcomingData, isLoading };
 };
 
 // TV show
 interface ITvShowDataContext {
   airingTodayData: IGetTvShow;
   onTheAirData: IGetTvShow;
-  popularData: IGetTvShow;
+  tvPopularData: IGetTvShow;
   tvTopRatedData: IGetTvShow;
   isLoading: boolean;
 }
@@ -78,7 +91,7 @@ export const TvShowDataContext = createContext<ITvShowDataContext>({
     total_pages: 0,
     total_results: 0,
   },
-  popularData: {
+  tvPopularData: {
     page: 0,
     results: [],
     total_pages: 0,
@@ -105,7 +118,7 @@ export const TvShowProvider = () => {
     queryFn: () => getTvShow("tv", "on_the_air"),
   });
 
-  const { data: popularData, isLoading: popularIsLoading } = useQuery({
+  const { data: tvPopularData, isLoading: popularIsLoading } = useQuery({
     queryKey: ["tv", "popular"],
     queryFn: () => getTvShow("tv", "popular"),
   });
@@ -117,5 +130,5 @@ export const TvShowProvider = () => {
 
   const isLoading = airingTodayIsLoading || onTheAirIsLoading || popularIsLoading || topRatedIsLoading;
 
-  return { airingTodayData, onTheAirData, popularData, tvTopRatedData, isLoading };
+  return { airingTodayData, onTheAirData, tvPopularData, tvTopRatedData, isLoading };
 };
