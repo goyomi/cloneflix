@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useState } from "react";
 import styled from "styled-components";
-import { IMovie } from "../type";
+import { IData, IGetMovie, IGetTvShow } from "../type";
 import { makeImagePath } from "../utils";
 import { useMatch, useNavigate } from "react-router-dom";
 import Modal from "./Modal";
-import { MovieDataContext } from "../context/DataContext";
+import { MovieDataContext, TvShowDataContext } from "../context/DataContext";
 
 const SliderContainer = styled.section`
   position: relative;
@@ -93,14 +93,55 @@ const infoVariants = {
 
 const offset = 6;
 
-function Slider({ title, category }: { title: string; category: string }) {
+interface ISlider {
+  title: string;
+  section: string;
+  category: string;
+}
+
+function Slider({ title, section, category }: ISlider) {
   const { nowPlayingData, topRatedData, upcomingData } = useContext(MovieDataContext);
+  const { airingTodayData, onTheAirData, popularData, tvTopRatedData } = useContext(TvShowDataContext);
+
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState("right");
   const navigate = useNavigate();
 
-  const data = category === "now_playing" ? nowPlayingData : category === "top_rated" ? topRatedData : upcomingData;
+  let data: IGetMovie | IGetTvShow | null = null;
+
+  if (section === "movie") {
+    switch (category) {
+      case "now_playing":
+        data = nowPlayingData;
+        break;
+      case "top_rated":
+        data = topRatedData;
+        break;
+      case "upcoming":
+        data = upcomingData;
+        break;
+      default:
+        console.error("movie 카테고리 없음");
+    }
+  } else if (section === "tv") {
+    switch (category) {
+      case "airing_today":
+        data = airingTodayData;
+        break;
+      case "on_the_air":
+        data = onTheAirData;
+        break;
+      case "popular":
+        data = popularData;
+        break;
+      case "top_rated":
+        data = tvTopRatedData;
+        break;
+      default:
+        console.error("tv 카테고리 없음");
+    }
+  }
 
   const variationIndex = (way: string) => {
     if (leaving || !data) return;
@@ -118,15 +159,15 @@ function Slider({ title, category }: { title: string; category: string }) {
   };
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onCardClicked = (movieId: string) => navigate(`/movie/${category}/${movieId}`);
+  const onCardClicked = (movieId: string) => navigate(`/${section}/${category}/${movieId}`);
 
-  const movieIdMatch = useMatch("/movie/:category/:movieId");
+  const routePattern = `/:section/:category/${section === "movie" ? ":movieId" : ":tvId"}`;
+  const dataIdMatch = useMatch(routePattern);
+  const idParamName = section === "movie" ? "movieId" : "tvId";
+  const matchCard = data?.results.filter((data) => String(data.id) === dataIdMatch?.params[idParamName]);
 
-  const matchCard = data.results.filter((movie: IMovie) => String(movie.id) === movieIdMatch?.params.movieId);
   let clickedCard = null;
-  if (matchCard.length > 0) {
-    clickedCard = matchCard[0];
-  }
+  if (matchCard && matchCard.length > 0) clickedCard = matchCard[0];
 
   return (
     <>
@@ -148,18 +189,18 @@ function Slider({ title, category }: { title: string; category: string }) {
             {data?.results
               .slice(1)
               .slice(offset * index, offset * index + offset)
-              .map((movie) => (
+              .map((result: IData) => (
                 <Card
-                  onClick={() => onCardClicked(movie.id)}
-                  key={movie.id}
+                  onClick={() => onCardClicked(result.id)}
+                  key={result.id}
                   variants={cardVariants}
                   initial="normal"
                   whileHover="hover"
                   transition={{ type: "tween" }}
-                  layoutId={movie.id}
+                  layoutId={result.id}
                 >
-                  <MovieImage src={makeImagePath(movie.backdrop_path)} />
-                  <Info variants={infoVariants}>{movie.title}</Info>
+                  <MovieImage src={makeImagePath(result.backdrop_path)} />
+                  <Info variants={infoVariants}>{result.title || result.name}</Info>
                 </Card>
               ))}
           </Row>
