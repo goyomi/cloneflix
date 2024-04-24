@@ -1,8 +1,7 @@
-import { useQuery } from "react-query";
-import { getAiringTodayTVShow, getOnTheAirTVShow, getPopularTVShow, getTopRatedTVShow } from "../api";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import Slider from "../components/Slider";
+import { TvShowDataContext, TvShowProvider } from "../context/DataContext";
 
 const HomeContainer = styled.div`
   background-color: black;
@@ -39,30 +38,27 @@ const Overview = styled.p`
 `;
 
 function Tv() {
-  const { data, isLoading: airingTodayIsLoading } = useQuery(["tvShows", "airingToday"], getAiringTodayTVShow);
-  const { data: onTheAirData, isLoading: onTheAirLoading } = useQuery(["tvShows", "onTheAir"], getOnTheAirTVShow);
-  const { data: popularData, isLoading: popularIsLoading } = useQuery(["tvShows", "popular"], getPopularTVShow);
-  const { data: topRatedData, isLoading: topRatedIsLoading } = useQuery(["tvShows", "topRated의"], getTopRatedTVShow);
-
-  const isLoading = airingTodayIsLoading || onTheAirLoading || popularIsLoading || topRatedIsLoading;
+  const { airingTodayData, onTheAirData, popularData, tvTopRatedData, isLoading } = TvShowProvider();
 
   return (
-    <HomeContainer>
-      {isLoading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <>
-          <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
-          </Banner>
-          {data ? <Slider data={data} title="Airing Today" /> : null}
-          {onTheAirData ? <Slider data={onTheAirData} title="On The Air" /> : null}
-          {popularData ? <Slider data={popularData} title="Popular" /> : null}
-          {topRatedData ? <Slider data={topRatedData} title="Top Rated" /> : null}
-        </>
-      )}
-    </HomeContainer>
+    <TvShowDataContext.Provider value={{ airingTodayData, onTheAirData, popularData, tvTopRatedData, isLoading }}>
+      <HomeContainer>
+        {isLoading ? (
+          <Loader>Loading...</Loader>
+        ) : (
+          <>
+            <Banner bgPhoto={makeImagePath(airingTodayData?.results[0].backdrop_path || "")}>
+              <Title>{airingTodayData?.results[0].title}</Title>
+              <Overview>{airingTodayData?.results[0].overview}</Overview>
+            </Banner>
+            <Slider title="Airing Today" section="tv" category="airing_today" />
+            <Slider title="On The Air" section="tv" category="on_the_air" />
+            <Slider title="Popular" section="tv" category="popular" />
+            <Slider title="Top Rated" section="tv" category="top_rated" />
+          </>
+        )}
+      </HomeContainer>
+    </TvShowDataContext.Provider>
   );
 }
 
