@@ -23,4 +23,26 @@ export interface IData {
   title?: string;
   name?: string;
   overview: string;
+  vote_average: number;
+}
+
+export interface IDetailData {
+  genres: [
+    {
+      id: number;
+      name: string;
+    }
+  ];
+  seasons: [
+    {
+      air_date: string;
+      episode_count: number;
+      id: number;
+      name: string;
+      overview: string;
+      poster_path: string;
+      season_number: number;
+      vote_average: number;
+    }
+  ];
 }
