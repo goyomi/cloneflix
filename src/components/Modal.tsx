@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import { IMovie } from "../type";
-import { useNavigate } from "react-router-dom";
+import { IData, IDetailData } from "../type";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getTvShowDetail } from "../api";
 
 const Overlay = styled(motion.div)`
   width: 100%;
@@ -16,16 +18,16 @@ const Overlay = styled(motion.div)`
 
 const ModalWrapper = styled(motion.div)`
   position: fixed;
-  top: 50%;
+  top: 10rem;
   left: 0;
   right: 0;
   margin: 0 auto;
   width: 40vw;
   height: 80vh;
-  transform: translateY(-50%);
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 0.5rem;
   overflow: hidden;
+  z-index: 10;
 `;
 
 const ModalImage = styled.div`
@@ -47,9 +49,17 @@ const ModalOverview = styled.p`
   line-height: 2rem;
 `;
 
-function Modal({ clickedCard }: { clickedCard: IMovie | null }) {
+function Modal({ clickedCard }: { clickedCard: IData | null }) {
   const navigate = useNavigate();
-  const onOverlayClicked = () => navigate("/");
+  const location = useLocation();
+
+  const onOverlayClicked = () => navigate(-1);
+  const [section, category, id] = location.pathname.split("/").filter((value) => value);
+  const { data: detailData } = useQuery<IDetailData>({
+    queryKey: [section, category],
+    queryFn: () => getTvShowDetail(section, id),
+  });
+
   return (
     <AnimatePresence>
       {clickedCard ? (
@@ -67,6 +77,19 @@ function Modal({ clickedCard }: { clickedCard: IMovie | null }) {
                 />
                 <ModalTitle>{clickedCard.title}</ModalTitle>
                 <ModalOverview>{clickedCard.overview}</ModalOverview>
+                {detailData && (
+                  <>
+                    <span style={{ fontSize: "3rem" }}>{detailData?.genres[0].name}</span>
+                    <span style={{ fontSize: "2rem" }}>{detailData?.seasons[0].season_number}</span>
+                    <div
+                      style={{
+                        backgroundImage: `url(${makeImagePath(detailData?.seasons[0].poster_path)})`,
+                        width: "50vw",
+                        height: "50vh",
+                      }}
+                    ></div>
+                  </>
+                )}
               </>
             )}
           </ModalWrapper>
