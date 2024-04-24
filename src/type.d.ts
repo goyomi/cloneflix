@@ -4,16 +4,23 @@ export interface IGetMovie {
     minimum: string;
   };
   page: number;
-  results: IMovie[];
+  results: IData[];
   total_pages: number;
   total_results: number;
 }
 
-export interface IMovie {
+export interface IGetTvShow {
+  page: number;
+  results: IData[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface IData {
   id: string;
   backdrop_path: string;
   poster_path: string;
   title?: string;
-  overview: string;
   name?: string;
+  overview: string;
 }
