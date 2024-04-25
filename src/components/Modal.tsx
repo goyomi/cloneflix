@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
-import { makeImagePath } from "../utils";
+import { makeImagePath, starRating } from "../utils";
 import { IData, IDetailData } from "../type";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getContentDetail } from "../api";
+import { getContentCredits, getContentDetail, getContentSimilar } from "../api";
 
 const Overlay = styled(motion.div)`
   width: 100%;
@@ -30,21 +30,82 @@ const ModalWrapper = styled(motion.div)`
   z-index: 10;
 `;
 
-const ModalImage = styled.div`
+const BackgroundImage = styled.div`
   width: 100%;
   height: calc(80vh / 2);
   background-position: center center;
   background-size: cover;
+  background-repeat: no-repeat;
 `;
 
-const ModalTitle = styled.h2`
-  padding: 1.5rem;
-  margin-top: -6rem;
-  font-size: 3.5rem;
+const ContentWrapper = styled.div`
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
-const ModalOverview = styled.p`
+const PosterImage = styled.div`
+  display: inline-block;
+  margin-top: -20rem;
+  width: calc(40vw * 0.25);
+  height: 0;
+  padding-top: 56.25%;
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+`;
+
+const TextWrapper = styled.div`
+  margin-top: -10rem;
   padding: 1.5rem;
+  width: calc(40vw * 0.7);
+
+  & > * {
+    margin-bottom: 0.6rem;
+  }
+
+  .title,
+  .original_title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .title {
+    font-size: 3rem;
+  }
+  .original_title {
+    font-size: 2.5rem;
+    height: 2.5rem;
+  }
+  .vote_average {
+    font-size: 2rem;
+  }
+`;
+
+const VoteAverage = styled.div`
+  font-size: 1.8rem;
+  color: currentColor;
+  .full {
+    color: gold;
+  }
+  .half {
+    position: relative;
+    display: inline-block;
+  }
+  .half::before {
+    display: inline-block;
+    content: "★";
+    width: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    color: gold;
+  }
+`;
+
+const ContentOverview = styled.p`
   font-size: 1.5rem;
   line-height: 2rem;
 `;
@@ -60,6 +121,16 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
     queryFn: () => getContentDetail(section, id),
   });
 
+  const { data: creditsData } = useQuery({
+    queryKey: [section, category],
+    queryFn: () => getContentCredits(section, id),
+  });
+
+  const { data: similarData } = useQuery({
+    queryKey: [section, category],
+    queryFn: () => getContentSimilar(section, id),
+  });
+
   return (
     <AnimatePresence>
       {clickedCard ? (
@@ -68,28 +139,22 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
           <ModalWrapper layoutId={clickedCard.id}>
             {clickedCard && (
               <>
-                <ModalImage
+                <BackgroundImage
                   style={{
                     backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
                       clickedCard.backdrop_path
                     )})`,
                   }}
                 />
-                <ModalTitle>{clickedCard.title}</ModalTitle>
-                <ModalOverview>{clickedCard.overview}</ModalOverview>
-                {detailData && (
-                  <>
-                    <span style={{ fontSize: "3rem" }}>{detailData?.genres[0].name}</span>
-                    <span style={{ fontSize: "2rem" }}>{detailData?.seasons[0].season_number}</span>
-                    <div
-                      style={{
-                        backgroundImage: `url(${makeImagePath(detailData?.seasons[0].poster_path)})`,
-                        width: "50vw",
-                        height: "50vh",
-                      }}
-                    ></div>
-                  </>
-                )}
+                <ContentWrapper>
+                  <PosterImage style={{ backgroundImage: `url(${makeImagePath(clickedCard.poster_path)})` }} />
+                  <TextWrapper>
+                    <h2 className="title">{clickedCard.title || clickedCard.name}</h2>
+                    <h3 className="original_title">{clickedCard.original_name}</h3>
+                    <VoteAverage>{starRating(clickedCard.vote_average)}</VoteAverage>
+                    <ContentOverview>{clickedCard.overview}</ContentOverview>
+                  </TextWrapper>
+                </ContentWrapper>
               </>
             )}
           </ModalWrapper>
