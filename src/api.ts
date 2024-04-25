@@ -10,3 +10,15 @@ export function getContentDetail(section: string, id: string) {
   return fetch(`${BASE_URL}/${section}/${id}?api_key=${API_KEY}&language=en-US&page=1
   `).then((response) => response.json());
 }
+
+export function getContentCredits(section: string, id: string) {
+  return fetch(`${BASE_URL}/${section}/${id}/credits?api_key=${API_KEY}&language=en-US&page=1`).then((response) =>
+    response.json()
+  );
+}
+
+export function getContentSimilar(section: string, id: string) {
+  return fetch(`${BASE_URL}/${section}/${id}/similar?api_key=${API_KEY}&language=en-US&page=1`).then((response) =>
+    response.json()
+  );
+}
