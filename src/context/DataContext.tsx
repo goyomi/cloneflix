@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createContext } from "react";
-import { getMovie, getTvShow } from "../api";
+import { getContent } from "../api";
 import { IGetMovie, IGetTvShow } from "../type";
 
 interface IMovieDataContext {
@@ -46,22 +46,22 @@ export const MovieDataContext = createContext<IMovieDataContext>({
 export const MovieProvider = () => {
   const { data: nowPlayingData, isLoading: nowPlayingIsLoading } = useQuery({
     queryKey: ["movie", "nowPlaying"],
-    queryFn: () => getMovie("movie", "now_playing"),
+    queryFn: () => getContent("movie", "now_playing"),
   });
 
   const { data: popularData, isLoading: popularIsLoading } = useQuery({
     queryKey: ["movie", "popular"],
-    queryFn: () => getMovie("movie", "popular"),
+    queryFn: () => getContent("movie", "popular"),
   });
 
   const { data: topRatedData, isLoading: topRatedIsLoading } = useQuery({
     queryKey: ["movie", "topRated"],
-    queryFn: () => getMovie("movie", "top_rated"),
+    queryFn: () => getContent("movie", "top_rated"),
   });
 
   const { data: upcomingData, isLoading: upcomingIsLoading } = useQuery({
     queryKey: ["movie", "upcoming"],
-    queryFn: () => getMovie("movie", "upcoming"),
+    queryFn: () => getContent("movie", "upcoming"),
   });
 
   const isLoading = nowPlayingIsLoading || popularIsLoading || topRatedIsLoading || upcomingIsLoading;
@@ -109,23 +109,23 @@ export const TvShowDataContext = createContext<ITvShowDataContext>({
 export const TvShowProvider = () => {
   const { data: airingTodayData, isLoading: airingTodayIsLoading } = useQuery({
     queryKey: ["tv", "airingToday"],
-    queryFn: () => getTvShow("tv", "airing_today"),
+    queryFn: () => getContent("tv", "airing_today"),
   });
 
   // Get a list of TV shows that air in the next 7 days
   const { data: onTheAirData, isLoading: onTheAirIsLoading } = useQuery({
     queryKey: ["tv", "onTheAir"],
-    queryFn: () => getTvShow("tv", "on_the_air"),
+    queryFn: () => getContent("tv", "on_the_air"),
   });
 
   const { data: tvPopularData, isLoading: popularIsLoading } = useQuery({
     queryKey: ["tv", "popular"],
-    queryFn: () => getTvShow("tv", "popular"),
+    queryFn: () => getContent("tv", "popular"),
   });
 
   const { data: tvTopRatedData, isLoading: topRatedIsLoading } = useQuery({
     queryKey: ["tv", "topRated"],
-    queryFn: () => getTvShow("tv", "top_rated"),
+    queryFn: () => getContent("tv", "top_rated"),
   });
 
   const isLoading = airingTodayIsLoading || onTheAirIsLoading || popularIsLoading || topRatedIsLoading;

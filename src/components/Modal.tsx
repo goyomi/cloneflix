@@ -4,7 +4,7 @@ import { makeImagePath } from "../utils";
 import { IData, IDetailData } from "../type";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getTvShowDetail } from "../api";
+import { getContentDetail } from "../api";
 
 const Overlay = styled(motion.div)`
   width: 100%;
@@ -57,7 +57,7 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
   const [section, category, id] = location.pathname.split("/").filter((value) => value);
   const { data: detailData } = useQuery<IDetailData>({
     queryKey: [section, category],
-    queryFn: () => getTvShowDetail(section, id),
+    queryFn: () => getContentDetail(section, id),
   });
 
   return (
