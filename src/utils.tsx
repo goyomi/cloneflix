@@ -1,3 +1,5 @@
+import styles from "./styles/modal.module.scss";
+
 export function makeImagePath(id: string, width?: string) {
   return `https://image.tmdb.org/t/p/${width ? width : "original"}/${id}`;
 }
@@ -12,17 +14,15 @@ export function starRating(vote_average: number) {
       {Array(fullStar)
         .fill(0)
         .map((_, idx) => (
-          <span key={idx} className="full">
+          <span key={idx} className={styles.full}>
             ★
           </span>
         ))}
-      {halfStar > 0 && <span className="half">★</span>}
+      {halfStar > 0 && <span className={styles.half}>★</span>}
       {Array(emptyStar)
         .fill(0)
         .map((_, idx) => (
-          <span key={idx} className="empty">
-            ★
-          </span>
+          <span key={idx}>★</span>
         ))}
     </>
   );
