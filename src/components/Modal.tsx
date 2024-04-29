@@ -1,114 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
-import styled from "styled-components";
 import { makeImagePath, starRating } from "../utils";
-import { IData, IDetailData } from "../type";
+import { ICredits, IData, IDetailData } from "../type";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getContentCredits, getContentDetail, getContentSimilar } from "../api";
-
-const Overlay = styled(motion.div)`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
-const ModalWrapper = styled(motion.div)`
-  position: fixed;
-  top: 10rem;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 40vw;
-  height: 80vh;
-  background-color: ${(props) => props.theme.black.lighter};
-  border-radius: 0.5rem;
-  overflow: hidden;
-  z-index: 10;
-`;
-
-const BackgroundImage = styled.div`
-  width: 100%;
-  height: calc(80vh / 2);
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
-`;
-
-const ContentWrapper = styled.div`
-  width: 100%;
-  padding: 0 2rem;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const PosterImage = styled.div`
-  display: inline-block;
-  margin-top: -20rem;
-  width: calc(40vw * 0.25);
-  height: 0;
-  padding-top: 56.25%;
-  background-position: center center;
-  background-size: contain;
-  background-repeat: no-repeat;
-`;
-
-const TextWrapper = styled.div`
-  margin-top: -10rem;
-  padding: 1.5rem;
-  width: calc(40vw * 0.7);
-
-  & > * {
-    margin-bottom: 0.6rem;
-  }
-
-  .title,
-  .original_title {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .title {
-    font-size: 3rem;
-  }
-  .original_title {
-    font-size: 2.5rem;
-    height: 2.5rem;
-  }
-  .vote_average {
-    font-size: 2rem;
-  }
-`;
-
-const VoteAverage = styled.div`
-  font-size: 1.8rem;
-  color: currentColor;
-  .full {
-    color: gold;
-  }
-  .half {
-    position: relative;
-    display: inline-block;
-  }
-  .half::before {
-    display: inline-block;
-    content: "★";
-    width: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-    color: gold;
-  }
-`;
-
-const ContentOverview = styled.p`
-  font-size: 1.5rem;
-  line-height: 2rem;
-`;
+import styles from "../styles/modal.module.scss";
 
 function Modal({ clickedCard }: { clickedCard: IData | null }) {
   const navigate = useNavigate();
@@ -117,47 +13,91 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
   const onOverlayClicked = () => navigate(-1);
   const [section, category, id] = location.pathname.split("/").filter((value) => value);
   const { data: detailData } = useQuery<IDetailData>({
-    queryKey: [section, category],
+    queryKey: [section, category, "detail", id],
     queryFn: () => getContentDetail(section, id),
   });
 
-  const { data: creditsData } = useQuery({
-    queryKey: [section, category],
+  const { data: creditsData } = useQuery<ICredits>({
+    queryKey: [section, category, "credits", id],
     queryFn: () => getContentCredits(section, id),
   });
 
   const { data: similarData } = useQuery({
-    queryKey: [section, category],
+    queryKey: [section, category, "similar", id],
     queryFn: () => getContentSimilar(section, id),
   });
 
+  // console.log(section, id);
+  // console.log("크레딧", creditsData);
+  // console.log("시밀러", similarData);
   return (
     <AnimatePresence>
-      {clickedCard ? (
+      {clickedCard && detailData ? (
         <>
-          <Overlay onClick={onOverlayClicked} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-          <ModalWrapper layoutId={clickedCard.id}>
-            {clickedCard && (
-              <>
-                <BackgroundImage
-                  style={{
-                    backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                      clickedCard.backdrop_path
-                    )})`,
-                  }}
-                />
-                <ContentWrapper>
-                  <PosterImage style={{ backgroundImage: `url(${makeImagePath(clickedCard.poster_path)})` }} />
-                  <TextWrapper>
-                    <h2 className="title">{clickedCard.title || clickedCard.name}</h2>
-                    <h3 className="original_title">{clickedCard.original_name}</h3>
-                    <VoteAverage>{starRating(clickedCard.vote_average)}</VoteAverage>
-                    <ContentOverview>{clickedCard.overview}</ContentOverview>
-                  </TextWrapper>
-                </ContentWrapper>
-              </>
-            )}
-          </ModalWrapper>
+          <motion.div
+            className={styles.overlay}
+            onClick={onOverlayClicked}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          <motion.article className={styles.modal_wrapper} layoutId={clickedCard.id}>
+            <div
+              className={styles.background_image}
+              style={{
+                backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                  clickedCard.backdrop_path
+                )})`,
+              }}
+            />
+            <section className={styles.content_part}>
+              <div
+                className={styles.poster_image}
+                style={{ backgroundImage: `url(${makeImagePath(clickedCard.poster_path)})` }}
+              />
+              <div className={styles.text_wrapper}>
+                <h2 className={styles.title}>{clickedCard.title || clickedCard.name}</h2>
+                <h3 className={styles.original_title}>{clickedCard.original_name}</h3>
+                <ul className={styles.detail_info_list}>
+                  <li>
+                    <h4>{clickedCard.release_date || clickedCard.first_air_date}</h4>
+                  </li>
+                  <li>
+                    <h4>{detailData.episode_run_time || detailData.runtime} min</h4>
+                  </li>
+                  <li>
+                    <div className={styles.vote_average}>{starRating(clickedCard.vote_average)}</div>
+                  </li>
+                </ul>
+                <ul className={styles.genre_list}>
+                  {detailData.genres.map((val, idx) => (
+                    <li>
+                      <h4 key={idx}>{val.name}</h4>
+                    </li>
+                  ))}
+                </ul>
+                <p className={styles.content_overview}>{clickedCard.overview}</p>
+              </div>
+            </section>
+            {creditsData ? (
+              <section className={styles.credit_part}>
+                <h2 className={styles.title}>Cast Members</h2>
+                <div className={styles.member_wrapper}>
+                  {creditsData.cast.map((member, idx) => (
+                    <span className={styles.member_card} key={idx}>
+                      <div
+                        className={styles.member_image}
+                        style={{ backgroundImage: `url(${makeImagePath(member.profile_path)})` }}
+                      >
+                        {!member.profile_path && "No Image"}
+                      </div>
+                      <span>{member.name}</span>
+                      <span>{member.character}</span>
+                    </span>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </motion.article>
         </>
       ) : null}
     </AnimatePresence>
