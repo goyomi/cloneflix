@@ -20,10 +20,15 @@ export interface IData {
   id: string;
   backdrop_path: string;
   poster_path: string;
-  title?: string;
-  name?: string;
+  original_name: string;
   overview: string;
   vote_average: number;
+  // movie
+  title?: string;
+  release_date?: string;
+  // tv
+  name?: string;
+  first_air_date?: string;
 }
 
 export interface IDetailData {
@@ -45,4 +50,45 @@ export interface IDetailData {
       vote_average: number;
     }
   ];
+  episode_run_time: [];
+  runtime: number;
+}
+
+export interface ICredits {
+  id: number;
+  cast: [
+    {
+      profile_path: string;
+      character: string;
+      name: string;
+    }
+  ];
+}
+
+export interface ISimilar {
+  page: number;
+  results: ISimilarResults[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface ISimilarResults {
+  poster_path: string;
+  name?: string;
+  title?: string;
+  vote_average: number;
+}
+
+export interface ISearchData {
+  page: number;
+  results: ISearchResults[];
+  total_pages: number;
+  total_results: number;
+}
+
+interface ISearchResults {
+  backdrop_path: string;
+  poster_path: string;
+  title?: string;
+  name?: string;
 }
