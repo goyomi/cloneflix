@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { makeImagePath, starRating } from "../utils";
-import { ICredits, IData, IDetailData } from "../type";
+import { ICredits, IData, IDetailData, ISimilar } from "../type";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getContentCredits, getContentDetail, getContentSimilar } from "../api";
@@ -22,14 +22,14 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
     queryFn: () => getContentCredits(section, id),
   });
 
-  const { data: similarData } = useQuery({
+  const { data: similarData } = useQuery<ISimilar>({
     queryKey: [section, category, "similar", id],
     queryFn: () => getContentSimilar(section, id),
   });
 
   // console.log(section, id);
   // console.log("크레딧", creditsData);
-  // console.log("시밀러", similarData);
+  // console.log("시밀러", similarData?.results.slice(0, 6));
   return (
     <AnimatePresence>
       {clickedCard && detailData ? (
@@ -92,6 +92,25 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
                       </div>
                       <span>{member.name}</span>
                       <span>{member.character}</span>
+                    </span>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+            {similarData ? (
+              <section className={styles.credit_part}>
+                <h2 className={styles.title}>Similar {section}</h2>
+                <div className={styles.member_wrapper}>
+                  {similarData.results.slice(0, 6).map((data, idx) => (
+                    <span className={styles.member_card} key={idx}>
+                      <div
+                        className={styles.member_image}
+                        style={{ backgroundImage: `url(${makeImagePath(data.poster_path)})` }}
+                      >
+                        {!data.poster_path && "No Image"}
+                      </div>
+                      <span>{data.name || data.title}</span>
+                      <span>(★ {data.vote_average})</span>
                     </span>
                   ))}
                 </div>
