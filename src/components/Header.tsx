@@ -118,7 +118,7 @@ function Header() {
   const onValid = (data: IForm) => {
     history(`/search?keyword=${data.keyword}`);
   };
-  console.log(tvMatch);
+  // console.log(tvMatch);
 
   return (
     <Nav variants={navVariants} initial="top" animate={scrollAnimation}>

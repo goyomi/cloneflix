@@ -5,7 +5,6 @@ import { TvShowDataContext, TvShowProvider } from "../context/DataContext";
 
 const HomeContainer = styled.div`
   background-color: black;
-  overflow-x: hidden;
 `;
 
 const Loader = styled.div`
