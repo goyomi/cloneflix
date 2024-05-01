@@ -12,6 +12,7 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
 
   const onOverlayClicked = () => navigate(-1);
   const [section, category, id] = location.pathname.split("/").filter((value) => value);
+
   const { data: detailData } = useQuery<IDetailData>({
     queryKey: [section, category, "detail", id],
     queryFn: () => getContentDetail(section, id),
@@ -27,9 +28,6 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
     queryFn: () => getContentSimilar(section, id),
   });
 
-  // console.log(section, id);
-  // console.log("크레딧", creditsData);
-  // console.log("시밀러", similarData?.results.slice(0, 6));
   return (
     <AnimatePresence>
       {clickedCard && detailData ? (

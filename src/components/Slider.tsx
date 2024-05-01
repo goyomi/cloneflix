@@ -5,7 +5,7 @@ import { IData, IGetMovie, IGetTvShow } from "../type";
 import { makeImagePath } from "../utils";
 import { useMatch, useNavigate } from "react-router-dom";
 import Modal from "./Modal";
-import { MovieDataContext, TvShowDataContext } from "../context/DataContext";
+import { HomeDataContext, MovieDataContext, TvShowDataContext } from "../context/DataContext";
 
 const SliderContainer = styled.section`
   position: relative;
@@ -102,6 +102,7 @@ interface ISlider {
 function Slider({ title, section, category }: ISlider) {
   const { nowPlayingData, popularData, topRatedData, upcomingData } = useContext(MovieDataContext);
   const { airingTodayData, onTheAirData, tvPopularData, tvTopRatedData } = useContext(TvShowDataContext);
+  const { movieTrendingData, tvTrendingData } = useContext(HomeDataContext);
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -124,6 +125,9 @@ function Slider({ title, section, category }: ISlider) {
       case "upcoming":
         data = upcomingData;
         break;
+      case "trending":
+        data = movieTrendingData;
+        break;
       default:
         console.error("movie 카테고리 없음");
     }
@@ -140,6 +144,9 @@ function Slider({ title, section, category }: ISlider) {
         break;
       case "top_rated":
         data = tvTopRatedData;
+        break;
+      case "trending":
+        data = tvTrendingData;
         break;
       default:
         console.error("tv 카테고리 없음");
