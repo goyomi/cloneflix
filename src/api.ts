@@ -28,3 +28,9 @@ export function getSearchData(section: string, query: string) {
     response.json()
   );
 }
+
+export function getTrendingData(section: string) {
+  return fetch(`${BASE_URL}/trending/${section}/week?api_key=${API_KEY}&language=en-US`).then((response) =>
+    response.json()
+  );
+}
