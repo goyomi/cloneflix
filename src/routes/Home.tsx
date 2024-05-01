@@ -1,7 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
+import { getTrendingData } from "../api";
 import styled from "styled-components";
-import { makeImagePath } from "../utils";
 import Slider from "../components/Slider";
-import { MovieDataContext, MovieProvider } from "../context/DataContext";
+import { makeImagePath } from "../utils";
+import { ITrending } from "../type";
+import { HomeDataContext, HomeDataProvider, MovieProvider } from "../context/DataContext";
 
 const HomeContainer = styled.div`
   background-color: black;
@@ -37,27 +40,25 @@ const Overview = styled.p`
 `;
 
 function Home() {
-  const { nowPlayingData, popularData, topRatedData, upcomingData, isLoading } = MovieProvider();
+  const { movieTrendingData, tvTrendingData, isLoading } = HomeDataProvider();
 
   return (
-    <MovieDataContext.Provider value={{ nowPlayingData, popularData, topRatedData, upcomingData, isLoading }}>
+    <HomeDataContext.Provider value={{ movieTrendingData, tvTrendingData, isLoading }}>
       <HomeContainer>
         {isLoading ? (
           <Loader>Loading...</Loader>
         ) : (
           <>
-            <Banner bgPhoto={makeImagePath(nowPlayingData?.results[0].backdrop_path || "")}>
-              <Title>{nowPlayingData?.results[0].title}</Title>
-              <Overview>{nowPlayingData?.results[0].overview}</Overview>
+            <Banner bgPhoto={makeImagePath(movieTrendingData?.results[0].backdrop_path || "")}>
+              <Title>{movieTrendingData?.results[0].title}</Title>
+              <Overview>{movieTrendingData?.results[0].overview}</Overview>
             </Banner>
-            <Slider title="Now Playing" section="movie" category="now_playing" />
-            <Slider title="Popular" section="movie" category="popular" />
-            <Slider title="Top Rated" section="movie" category="top_rated" />
-            <Slider title="Upcoming" section="movie" category="upcoming" />
+            <Slider title="Movie" section="movie" category="trending" />
+            <Slider title="Tv" section="tv" category="trending" />
           </>
         )}
       </HomeContainer>
-    </MovieDataContext.Provider>
+    </HomeDataContext.Provider>
   );
 }
 
