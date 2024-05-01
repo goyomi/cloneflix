@@ -1,3 +1,10 @@
+export interface ITrending {
+  page: number;
+  results: IData[];
+  total_pages: number;
+  total_results: number;
+}
+
 export interface IGetMovie {
   dates: {
     maximum: string;
