@@ -1,7 +1,44 @@
 import { useQuery } from "@tanstack/react-query";
 import { createContext } from "react";
-import { getContent } from "../api";
-import { IGetMovie, IGetTvShow } from "../type";
+import { getContent, getTrendingData } from "../api";
+import { IGetMovie, IGetTvShow, ITrending } from "../type";
+
+interface IHomeDataContext {
+  movieTrendingData: ITrending;
+  tvTrendingData: ITrending;
+  isLoading: boolean;
+}
+
+export const HomeDataContext = createContext<IHomeDataContext>({
+  movieTrendingData: {
+    page: 0,
+    results: [],
+    total_pages: 0,
+    total_results: 0,
+  },
+  tvTrendingData: {
+    page: 0,
+    results: [],
+    total_pages: 0,
+    total_results: 0,
+  },
+  isLoading: true,
+});
+
+export const HomeDataProvider = () => {
+  const { data: movieTrendingData, isLoading: movieTrendingLoading } = useQuery({
+    queryKey: ["trending", "movie"],
+    queryFn: () => getTrendingData("movie"),
+  });
+  const { data: tvTrendingData, isLoading: tvTrendingLoading } = useQuery({
+    queryKey: ["trending", "tv"],
+    queryFn: () => getTrendingData("tv"),
+  });
+
+  const isLoading = movieTrendingLoading || tvTrendingLoading;
+
+  return { movieTrendingData, tvTrendingData, isLoading };
+};
 
 interface IMovieDataContext {
   nowPlayingData: IGetMovie;
