@@ -2,10 +2,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import { IData, IGetMovie, IGetTvShow } from "../type";
-import { makeImagePath } from "../utils";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 import Modal from "./Modal";
 import { HomeDataContext, MovieDataContext, TvShowDataContext } from "../context/DataContext";
+import ContentImage from "./ContentImage";
 
 const SliderContainer = styled.section`
   position: relative;
@@ -41,35 +41,6 @@ const Row = styled(motion.div)`
   gap: 1rem;
 `;
 
-const Card = styled(motion.div)`
-  width: 100%;
-  height: 20rem;
-  background-color: ${(props) => props.theme.black.lighter};
-  cursor: pointer;
-  &:first-child {
-    transform-origin: left;
-  }
-  &:last-child {
-    transform-origin: right;
-  }
-`;
-
-const MovieImage = styled(motion.img)<{ src: string }>`
-  width: 100%;
-  height: 20rem;
-  object-fit: cover;
-`;
-
-const Info = styled(motion.h4)`
-  width: 100%;
-  padding: 2rem;
-  height: 5rem;
-  font-size: 1.5rem;
-  text-align: center;
-  background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
-`;
-
 const rowVariants = {
   hidden: (direction: string) => ({
     x: direction === "right" ? window.outerWidth : -window.outerWidth,
@@ -80,15 +51,6 @@ const rowVariants = {
   exit: (direction: string) => ({
     x: direction === "right" ? -window.outerWidth : window.outerWidth,
   }),
-};
-
-const cardVariants = {
-  normal: { scale: 1 },
-  hover: { scale: 1.3, y: -50, transition: { type: "tween", delay: 0.2, duration: 0.3 }, zIndex: 10, ease: "linear" },
-};
-
-const infoVariants = {
-  hover: { opacity: 1 },
 };
 
 const offset = 6;
@@ -107,7 +69,6 @@ function Slider({ title, section, category }: ISlider) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState("right");
-  const navigate = useNavigate();
 
   let data: IGetMovie | IGetTvShow | null = null;
 
@@ -169,7 +130,6 @@ function Slider({ title, section, category }: ISlider) {
   };
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onCardClicked = (movieId: string) => navigate(`/${section}/${category}/${movieId}`);
 
   const routePattern = `/:section/:category/${section === "movie" ? ":movieId" : ":tvId"}`;
   const dataIdMatch = useMatch(routePattern);
@@ -200,18 +160,7 @@ function Slider({ title, section, category }: ISlider) {
               .slice(1)
               .slice(offset * index, offset * index + offset)
               .map((result: IData) => (
-                <Card
-                  onClick={() => onCardClicked(result.id)}
-                  key={result.id}
-                  variants={cardVariants}
-                  initial="normal"
-                  whileHover="hover"
-                  transition={{ type: "tween" }}
-                  layoutId={result.id}
-                >
-                  <MovieImage src={makeImagePath(result.backdrop_path)} />
-                  <Info variants={infoVariants}>{result.title || result.name}</Info>
-                </Card>
+                <ContentImage result={result} section={section} category={category} />
               ))}
           </Row>
           <IndexButton onClick={() => variationIndex("right")} way={"right"}>
