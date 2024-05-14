@@ -54,7 +54,7 @@ function Home() {
               <Overview>{movieTrendingData?.results[0].overview}</Overview>
             </Banner>
             <Slider title="Movie" section="movie" category="trending" />
-            <Slider title="Tv" section="tv" category="trending" />
+            <Slider title="TV" section="tv" category="trending" />
           </>
         )}
       </HomeContainer>
