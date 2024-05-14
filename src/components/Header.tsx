@@ -7,7 +7,7 @@ import styled from "styled-components";
 const Nav = styled(motion.nav)`
   padding: 2rem 6rem;
   width: 100%;
-  height: 8rem;
+  height: 6rem;
   position: fixed;
   top: 0;
   display: flex;
@@ -16,6 +16,7 @@ const Nav = styled(motion.nav)`
   background-color: transparent;
   font-size: 1.4rem;
   z-index: 100;
+  font-size: 1.5rem;
 `;
 
 const Col = styled.div`
@@ -97,7 +98,7 @@ function Header() {
   const { scrollY } = useScroll();
   useEffect(() => {
     scrollY.onChange(() => {
-      if (scrollY.get() > 60) {
+      if (scrollY.get() > 30) {
         scrollAnimation.start("scroll");
       } else {
         scrollAnimation.start("top");
@@ -142,7 +143,7 @@ function Header() {
             {movieMatch && <Circle layoutId="circleDot" />}
           </Item>
           <Item>
-            <Link to="/tv">Tv Shows</Link>
+            <Link to="/tv">TV Shows</Link>
             {tvMatch && <Circle layoutId="circleDot" />}
           </Item>
         </Items>
@@ -151,10 +152,10 @@ function Header() {
         <SearchBar onSubmit={handleSubmit(onValid)}>
           <Input
             {...register("keyword", { required: true, minLength: 2 })}
-            animate={inputAnimation}
+            animate={{ scaleX: searchOpen ? 1 : 0 }}
             transition={{ ease: "linear" }}
             type="text"
-            placeholder="search for movie or tv show"
+            placeholder="Title, Person, Genre"
           />
           <motion.svg onClick={openSearch} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <path
@@ -163,7 +164,7 @@ function Header() {
             />
           </motion.svg>
         </SearchBar>
-        <button>search</button>
+        {/* <button>search</button> */}
       </Col>
     </Nav>
   );
