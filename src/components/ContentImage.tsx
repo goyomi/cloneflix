@@ -6,7 +6,7 @@ import { makeImagePath } from "../utils";
 
 const Card = styled(motion.div)`
   width: 100%;
-  height: 20rem;
+  height: auto;
   background-color: ${(props) => props.theme.black.lighter};
   cursor: pointer;
   &:first-child {
@@ -19,8 +19,7 @@ const Card = styled(motion.div)`
 
 const MovieImage = styled(motion.img)<{ src: string }>`
   width: 100%;
-  height: 20rem;
-  object-fit: cover;
+  aspect-ratio: 16 / 9;
 `;
 
 const Info = styled(motion.h4)`
