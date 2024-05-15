@@ -7,7 +7,6 @@ import { makeImagePath } from "../utils";
 const Card = styled(motion.div)`
   width: 100%;
   height: auto;
-  background-color: ${(props) => props.theme.black.lighter};
   cursor: pointer;
   &:first-child {
     transform-origin: left;
@@ -24,9 +23,15 @@ const MovieImage = styled(motion.img)<{ src: string }>`
 
 const Info = styled(motion.h4)`
   width: 100%;
-  padding: 2rem;
   height: 5rem;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
   font-size: 1.5rem;
+  line-height: 2rem;
   text-align: center;
   background-color: ${(props) => props.theme.black.lighter};
   opacity: 0;
