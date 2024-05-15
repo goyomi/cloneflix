@@ -25,7 +25,7 @@ function Home() {
           <Loader>Loading...</Loader>
         ) : (
           <>
-            <Banner movieTrendingData={movieTrendingData} />
+            <Banner movieTrendingData={movieTrendingData} section="movie" category="trending" />
             <Slider title="Movie" section="movie" category="trending" />
             <Slider title="TV" section="tv" category="trending" />
           </>
