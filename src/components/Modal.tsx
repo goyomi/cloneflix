@@ -5,7 +5,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getContentCredits, getContentDetail, getContentSimilar } from "../api";
 import styles from "../styles/modal.module.scss";
-import ModalContent from "./ModalContent";
+import ContentInformation from "./ModalContents/ContentInformation";
+import CastMember from "./ModalContents/CastMember";
+import SimilarContent from "./ModalContents/SimilarContent";
 
 function Modal({ clickedCard }: { clickedCard: IData | null }) {
   const navigate = useNavigate();
@@ -48,45 +50,9 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
                 )})`,
               }}
             />
-            <ModalContent clickedCard={clickedCard} detailData={detailData} />
-            {creditsData ? (
-              <section className={styles.credit_part}>
-                <h2 className={styles.title}>Cast Members</h2>
-                <div className={styles.member_wrapper}>
-                  {creditsData.cast.map((member, idx) => (
-                    <span className={styles.member_card} key={idx}>
-                      <div
-                        className={styles.member_image}
-                        style={{ backgroundImage: `url(${makeImagePath(member.profile_path)})` }}
-                      >
-                        {!member.profile_path && "No Image"}
-                      </div>
-                      <span>{member.name}</span>
-                      <span>{member.character}</span>
-                    </span>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-            {similarData ? (
-              <section className={styles.credit_part}>
-                <h2 className={styles.title}>Similar {section}</h2>
-                <div className={styles.member_wrapper}>
-                  {similarData.results.slice(0, 6).map((data, idx) => (
-                    <span className={styles.member_card} key={idx}>
-                      <div
-                        className={styles.member_image}
-                        style={{ backgroundImage: `url(${makeImagePath(data.poster_path)})` }}
-                      >
-                        {!data.poster_path && "No Image"}
-                      </div>
-                      <span>{data.name || data.title}</span>
-                      <span>(★ {data.vote_average})</span>
-                    </span>
-                  ))}
-                </div>
-              </section>
-            ) : null}
+            <ContentInformation clickedCard={clickedCard} detailData={detailData} />
+            {creditsData ? <CastMember creditsData={creditsData} /> : null}
+            {similarData ? <SimilarContent similarData={similarData} section={section} /> : null}
           </motion.article>
         </>
       ) : null}
