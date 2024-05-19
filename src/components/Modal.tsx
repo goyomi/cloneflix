@@ -4,10 +4,44 @@ import { ICredits, IData, IDetailData, ISimilar } from "../type";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getContentCredits, getContentDetail, getContentSimilar } from "../api";
-import styles from "../styles/modal.module.scss";
 import ContentInformation from "./ModalContents/ContentInformation";
 import CastMember from "./ModalContents/CastMember";
 import SimilarContent from "./ModalContents/SimilarContent";
+import styled from "styled-components";
+
+const Overlay = styled(motion.div)`
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  z-index: 20;
+`;
+
+const ModalWrapper = styled(motion.article)`
+  width: 50vw;
+  min-height: 40vw;
+  height: auto;
+  position: absolute;
+  top: 10rem;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: #2f2f2f;
+  border-radius: 0.5rem;
+  z-index: 30;
+  overflow-y: hidden; // border radius
+`;
+
+const BackgroundImage = styled.div`
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+`;
 
 function Modal({ clickedCard }: { clickedCard: IData | null }) {
   const navigate = useNavigate();
@@ -35,15 +69,9 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
     <AnimatePresence>
       {clickedCard && detailData ? (
         <>
-          <motion.div
-            className={styles.overlay}
-            onClick={onOverlayClicked}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          />
-          <motion.article className={styles.modal_wrapper} layoutId={clickedCard.id}>
-            <div
-              className={styles.background_image}
+          <Overlay onClick={onOverlayClicked} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+          <ModalWrapper layoutId={clickedCard.id}>
+            <BackgroundImage
               style={{
                 backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
                   clickedCard.backdrop_path
@@ -53,7 +81,7 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
             <ContentInformation clickedCard={clickedCard} detailData={detailData} />
             {creditsData ? <CastMember creditsData={creditsData} /> : null}
             {similarData ? <SimilarContent similarData={similarData} section={section} /> : null}
-          </motion.article>
+          </ModalWrapper>
         </>
       ) : null}
     </AnimatePresence>
