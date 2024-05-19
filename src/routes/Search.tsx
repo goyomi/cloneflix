@@ -3,7 +3,63 @@ import { useLocation } from "react-router-dom";
 import { getSearchData } from "../api";
 import { ISearchData } from "../type";
 import { makeImagePath } from "../utils";
-import styles from "../styles/search.module.scss";
+import styled from "styled-components";
+
+const SearchContainer = styled.div`
+  margin-top: 8rem;
+  width: 100%;
+  padding: 0 2rem 2rem;
+
+  .search-title {
+    font-size: 2rem;
+    strong {
+      font-weight: bolder;
+    }
+  }
+`;
+
+const SearchContent = styled.section`
+  width: 100%;
+  margin-top: 2rem;
+  .section-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+`;
+
+const ContentCardList = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 20rem;
+  gap: 1rem;
+`;
+
+const ContentCard = styled.li`
+  .content_image {
+    width: 100%;
+    height: 15rem;
+    object-fit: cover;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    color: currentColor;
+  }
+  .content_title {
+    display: block;
+    width: 100%;
+    height: 5rem;
+    padding: 1.5rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    text-align: center;
+    background-color: #2f2f2f;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+`;
 
 function Search() {
   const location = useLocation();
@@ -18,35 +74,35 @@ function Search() {
   });
 
   return (
-    <div className={styles["search-container"]}>
-      <h2 className={styles["search-title"]}>
+    <SearchContainer>
+      <h2 className="search-title">
         Here are the search results for <strong>'{keyword}'</strong>.
       </h2>
-      <section className={styles["movie-search-part"]}>
-        <h3 className={styles["section-title"]}>Movie</h3>
+      <SearchContent>
+        <h3 className="section-title">Movie</h3>
         {movieSearchData ? (
-          <ul className={styles["card-list"]}>
+          <ContentCardList>
             {movieSearchData.results.map((movie, idx) => (
-              <li key={idx} className={styles["card"]}>
+              <ContentCard key={idx}>
                 {movie.backdrop_path ? (
                   <img
-                    className={styles["image"]}
+                    className="content_image"
                     src={makeImagePath(movie.backdrop_path)}
                     alt={movie.name || movie.title}
                   />
                 ) : (
-                  <div className={styles["image"]}>"No Image"</div>
+                  <div className="content_image">"No Image"</div>
                 )}
-                <span className={styles["name"]}>{movie.name || movie.title}</span>
-              </li>
+                <span className="content_title">{movie.name || movie.title}</span>
+              </ContentCard>
             ))}
-          </ul>
+          </ContentCardList>
         ) : (
           <div>Sorry There are no search results for '{keyword}'.</div>
         )}
-      </section>
-      <section className={styles["movie-search-part"]}>
-        <h3 className={styles["section-title"]}>TV Show</h3>
+      </SearchContent>
+      {/* <SearchContent>
+        <h3 className="section-title">TV Show</h3>
         {tvSearchData ? (
           <ul className={styles["card-list"]}>
             {tvSearchData.results.map((tv, idx) => (
@@ -63,8 +119,8 @@ function Search() {
         ) : (
           <div>Sorry There are no search results for '{keyword}'.</div>
         )}
-      </section>
-    </div>
+      </SearchContent> */}
+    </SearchContainer>
   );
 }
 
