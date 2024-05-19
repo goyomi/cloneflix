@@ -6,16 +6,16 @@ import { makeImagePath } from "../utils";
 import styles from "../styles/search.module.scss";
 
 function Search() {
+  const location = useLocation();
+  const keyword = new URLSearchParams(`${location.search}`).get("keyword") || "";
   const { data: movieSearchData } = useQuery<ISearchData>({
-    queryKey: ["movie", "search"],
+    queryKey: ["movie", "search", keyword],
     queryFn: () => getSearchData("movie", keyword),
   });
   const { data: tvSearchData } = useQuery<ISearchData>({
-    queryKey: ["tv", "search"],
+    queryKey: ["tv", "search", keyword],
     queryFn: () => getSearchData("tv", keyword),
   });
-  const location = useLocation();
-  const keyword = new URLSearchParams(`${location.search}`).get("keyword") || "";
 
   return (
     <div className={styles["search-container"]}>
