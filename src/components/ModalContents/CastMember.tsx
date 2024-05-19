@@ -24,7 +24,7 @@ export const MemberWrapper = styled.div`
 `;
 
 export const MemberCard = styled.span`
-  .member_image {
+  .content_image {
     margin-bottom: 1rem;
     aspect-ratio: 1 / 1.5;
     background-position: center center;
@@ -74,7 +74,7 @@ function CastMember({ creditsData }: { creditsData: ICredits }) {
       <MemberWrapper>
         {visibleCard.map((member, idx) => (
           <MemberCard key={idx}>
-            <div className="member_image" style={{ backgroundImage: `url(${makeImagePath(member.profile_path)})` }}>
+            <div className="content_image" style={{ backgroundImage: `url(${makeImagePath(member.profile_path)})` }}>
               {!member.profile_path && "No Image"}
             </div>
             <span>{member.name}</span>
