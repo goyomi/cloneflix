@@ -50,9 +50,10 @@ interface IContentImageProps {
   result: IData;
   section: string;
   category: string;
+  title: string;
 }
 
-function ContentImage({ result, section, category }: IContentImageProps) {
+function ContentImage({ result, section, category, title }: IContentImageProps) {
   const navigate = useNavigate();
   const onCardClicked = (movieId: string) => navigate(`/${section}/${category}/${movieId}`);
 
@@ -64,7 +65,7 @@ function ContentImage({ result, section, category }: IContentImageProps) {
       initial="normal"
       whileHover="hover"
       transition={{ type: "tween" }}
-      layoutId={result.id}
+      layoutId={result.id + title}
     >
       <MovieImage src={makeImagePath(result.backdrop_path)} />
       <Info variants={infoVariants}>{result.title || result.name}</Info>

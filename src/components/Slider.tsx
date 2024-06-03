@@ -43,13 +43,13 @@ const Row = styled(motion.div)`
 
 const rowVariants = {
   hidden: (direction: string) => ({
-    x: direction === "right" ? window.outerWidth : -window.outerWidth,
+    x: direction === "right" ? "100vw" : "-100vw",
   }),
   visible: {
     x: 0,
   },
   exit: (direction: string) => ({
-    x: direction === "right" ? -window.outerWidth : window.outerWidth,
+    x: direction === "right" ? "-100vw" : "100vw",
   }),
 };
 
@@ -160,7 +160,7 @@ function Slider({ title, section, category }: ISlider) {
               .slice(1)
               .slice(offset * index, offset * index + offset)
               .map((result: IData) => (
-                <ContentImage result={result} section={section} category={category} />
+                <ContentImage result={result} section={section} category={category} title={title} />
               ))}
           </Row>
           <IndexButton onClick={() => variationIndex("right")} way={"right"}>
