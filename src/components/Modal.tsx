@@ -8,6 +8,7 @@ import ContentInformation from "./ModalContents/ContentInformation";
 import CastMember from "./ModalContents/CastMember";
 import SimilarContent from "./ModalContents/SimilarContent";
 import styled from "styled-components";
+import { useEffect } from "react";
 
 const Overlay = styled(motion.div)`
   width: 100%;
@@ -64,6 +65,11 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
     queryKey: [section, category, "similar", id],
     queryFn: () => getContentSimilar(section, id),
   });
+
+  // 스크롤 초기화
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [clickedCard]);
 
   return (
     <AnimatePresence>
