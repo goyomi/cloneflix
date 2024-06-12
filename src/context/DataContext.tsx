@@ -5,7 +5,9 @@ import { IGetMovie, IGetTvShow, ITrending } from "../type";
 
 interface IHomeDataContext {
   movieTrendingData: ITrending;
+  movieTrendingData_2: ITrending;
   tvTrendingData: ITrending;
+  tvTrendingData_2: ITrending;
   isLoading: boolean;
 }
 
@@ -16,7 +18,19 @@ export const HomeDataContext = createContext<IHomeDataContext>({
     total_pages: 0,
     total_results: 0,
   },
+  movieTrendingData_2: {
+    page: 0,
+    results: [],
+    total_pages: 0,
+    total_results: 0,
+  },
   tvTrendingData: {
+    page: 0,
+    results: [],
+    total_pages: 0,
+    total_results: 0,
+  },
+  tvTrendingData_2: {
     page: 0,
     results: [],
     total_pages: 0,
@@ -30,14 +44,22 @@ export const HomeDataProvider = () => {
     queryKey: ["trending", "movie"],
     queryFn: () => getTrendingData("movie"),
   });
+  const { data: movieTrendingData_2, isLoading: movieTrendingLoading_2 } = useQuery({
+    queryKey: ["trending_2", "movie"],
+    queryFn: () => getTrendingData("movie", 2),
+  });
   const { data: tvTrendingData, isLoading: tvTrendingLoading } = useQuery({
     queryKey: ["trending", "tv"],
     queryFn: () => getTrendingData("tv"),
   });
+  const { data: tvTrendingData_2, isLoading: tvTrendingLoading_2 } = useQuery({
+    queryKey: ["trending_2", "tv"],
+    queryFn: () => getTrendingData("tv", 2),
+  });
 
-  const isLoading = movieTrendingLoading || tvTrendingLoading;
+  const isLoading = movieTrendingLoading || movieTrendingLoading_2 || tvTrendingLoading || tvTrendingLoading_2;
 
-  return { movieTrendingData, tvTrendingData, isLoading };
+  return { movieTrendingData, movieTrendingData_2, tvTrendingData, tvTrendingData_2, isLoading };
 };
 
 interface IMovieDataContext {
