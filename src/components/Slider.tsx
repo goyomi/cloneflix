@@ -10,7 +10,7 @@ import ContentImage from "./ContentImage";
 const SliderContainer = styled.section`
   position: relative;
   top: -10rem;
-  margin-bottom: 26.5rem;
+  margin-bottom: 20.5rem;
   &:last-child {
     margin-bottom: 0;
   }
@@ -37,7 +37,7 @@ const Row = styled(motion.div)`
   width: 100%;
   position: absolute;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
 `;
 
@@ -53,24 +53,26 @@ const rowVariants = {
   }),
 };
 
-const offset = 6;
-
 interface ISlider {
   title: string;
   section: string;
   category: string;
 }
 
+const offset = 5;
+
 function Slider({ title, section, category }: ISlider) {
   const { nowPlayingData, popularData, topRatedData, upcomingData } = useContext(MovieDataContext);
   const { airingTodayData, onTheAirData, tvPopularData, tvTopRatedData } = useContext(TvShowDataContext);
-  const { movieTrendingData, tvTrendingData } = useContext(HomeDataContext);
+  const { movieTrendingData, movieTrendingData_2, tvTrendingData, tvTrendingData_2 } = useContext(HomeDataContext);
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState("right");
 
   let data: IGetMovie | IGetTvShow | null = null;
+
+  console.log(tvTrendingData, tvTrendingData_2);
 
   if (section === "movie") {
     switch (category) {
@@ -88,6 +90,9 @@ function Slider({ title, section, category }: ISlider) {
         break;
       case "trending":
         data = movieTrendingData;
+        break;
+      case "trending_2":
+        data = movieTrendingData_2;
         break;
       default:
         console.error("movie 카테고리 없음");
@@ -109,6 +114,9 @@ function Slider({ title, section, category }: ISlider) {
       case "trending":
         data = tvTrendingData;
         break;
+      case "trending_2":
+        data = tvTrendingData_2;
+        break;
       default:
         console.error("tv 카테고리 없음");
     }
@@ -118,8 +126,8 @@ function Slider({ title, section, category }: ISlider) {
     if (leaving || !data) return;
     toggleLeaving();
     setDirection(way);
-    const totalMovie = data.results.length - 1;
-    const maxIndex = Math.floor(totalMovie / offset) - 1;
+    const totalMovie = data.results.length;
+    const maxIndex = Math.floor((totalMovie - 1) / offset);
     setIndex((prev) => {
       if (way === "right") {
         return prev === maxIndex ? 0 : prev + 1;
@@ -156,12 +164,15 @@ function Slider({ title, section, category }: ISlider) {
             transition={{ type: "tween", duration: 0.8, ease: "linear" }}
             key={index}
           >
-            {data?.results
-              .slice(1)
-              .slice(offset * index, offset * index + offset)
-              .map((result: IData) => (
-                <ContentImage result={result} section={section} category={category} title={title} />
-              ))}
+            {data?.results.slice(offset * index, offset * index + offset).map((result: IData, idx) => (
+              <ContentImage
+                key={result.id || idx}
+                result={result}
+                section={section}
+                category={category}
+                title={title}
+              />
+            ))}
           </Row>
           <IndexButton onClick={() => variationIndex("right")} way={"right"}>
             {">"}
