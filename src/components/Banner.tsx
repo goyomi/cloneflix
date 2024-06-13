@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import { IGetMovie } from "../type";
+import { IData } from "../type";
 import { useNavigate } from "react-router-dom";
 import { InfoIconSvg } from "../svg";
+// import { IHomeDataContext } from "../context/DataContext";
 
 const Container = styled.article<{ bgPhoto: string }>`
   height: 100vh;
@@ -50,21 +51,22 @@ const InfoIcon = styled.svg`
 `;
 
 interface IBannerProps {
-  movieTrendingData: IGetMovie;
+  getRandomContent: () => IData | null;
   section: string;
   category: string;
 }
 
-function Banner({ movieTrendingData, section, category }: IBannerProps) {
+function Banner({ getRandomContent, section, category }: IBannerProps) {
   const navigate = useNavigate();
-  const onCardClicked = () => navigate(`/${section}/${category}/${MOVIE_RESULTS_DATA.id}`);
+  const randomContent = getRandomContent();
+  if (!randomContent) return <section>No content available</section>;
+  const onCardClicked = () => navigate(`/${section}/${category}/${randomContent.id}`);
 
-  const MOVIE_RESULTS_DATA = movieTrendingData?.results[0];
   return (
-    <Container bgPhoto={makeImagePath(MOVIE_RESULTS_DATA.backdrop_path || "")}>
+    <Container bgPhoto={makeImagePath(randomContent.backdrop_path || "")}>
       <ContentWrapper>
-        <Title>{MOVIE_RESULTS_DATA.title}</Title>
-        <Overview>{MOVIE_RESULTS_DATA.overview}</Overview>
+        <Title>{randomContent.title || randomContent.name}</Title>
+        <Overview>{randomContent.overview}</Overview>
       </ContentWrapper>
       <InfoButton onClick={onCardClicked}>
         <InfoIcon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

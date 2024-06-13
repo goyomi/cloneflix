@@ -3,7 +3,7 @@ import { createContext } from "react";
 import { getContent, getTrendingData } from "../api";
 import { IGetMovie, IGetTvShow, ITrending } from "../type";
 
-interface IHomeDataContext {
+export interface IHomeDataContext {
   movieTrendingData: ITrending;
   movieTrendingData_2: ITrending;
   tvTrendingData: ITrending;
