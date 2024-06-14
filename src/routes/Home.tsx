@@ -3,16 +3,22 @@ import Slider from "../components/Slider";
 import { HomeDataContext, HomeDataProvider } from "../context/DataContext";
 import Banner from "../components/Banner";
 import Loading from "../components/Loading";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IData } from "../type";
 
 const HomeContainer = styled.div`
   background-color: black;
 `;
 
+interface IRandomContentResult {
+  randomContent: IData;
+  randomContentSection: string;
+}
+
 function Home() {
   const { movieTrendingData, movieTrendingData_2, tvTrendingData, tvTrendingData_2, isLoading } = HomeDataProvider();
-  const getRandomContent = (): IData | null => {
+  const [randomContentData, setRandomContentData] = useState<IRandomContentResult | null>(null);
+  const getRandomContent = (): IRandomContentResult | null => {
     if (
       !movieTrendingData?.results ||
       !movieTrendingData_2?.results ||
@@ -22,18 +28,23 @@ function Home() {
       return null;
     const allContent = [
       ...movieTrendingData.results,
-      ...tvTrendingData_2.results,
+      ...movieTrendingData_2.results,
       ...tvTrendingData.results,
       ...tvTrendingData_2.results,
     ];
     if (allContent.length === 0) return null;
     const randomIndex = Math.floor(Math.random() * allContent.length);
-    return allContent[randomIndex];
+    const randomContent = allContent[randomIndex];
+    const randomContentSection = allContent[randomIndex].media_type;
+    return { randomContent, randomContentSection };
   };
 
   useEffect(() => {
-    getRandomContent();
-  });
+    const randomContentResult = getRandomContent();
+    setRandomContentData(randomContentResult);
+  }, [movieTrendingData, movieTrendingData_2, tvTrendingData, tvTrendingData_2]);
+
+  const { randomContent, randomContentSection } = randomContentData || {};
 
   return (
     <HomeDataContext.Provider
@@ -44,7 +55,9 @@ function Home() {
           <Loading />
         ) : (
           <>
-            <Banner getRandomContent={getRandomContent} section="movie" category="trending" />
+            {randomContent && randomContentSection && (
+              <Banner getRandomContent={() => randomContent} section={randomContentSection} category="trending" />
+            )}
             <Slider title="Top20 Trending Movies" section="movie" category="trending" />
             <Slider title="Next20 Trending Movies" section="movie" category="trending_2" />
             <Slider title="Trending TV Shows Top20" section="tv" category="trending" />
