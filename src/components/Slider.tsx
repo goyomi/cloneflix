@@ -72,8 +72,6 @@ function Slider({ title, section, category }: ISlider) {
 
   let data: IGetMovie | IGetTvShow | null = null;
 
-  console.log(tvTrendingData, tvTrendingData_2);
-
   if (section === "movie") {
     switch (category) {
       case "now_playing":

@@ -3,8 +3,6 @@ import { makeImagePath } from "../utils";
 import { IData } from "../type";
 import { useNavigate } from "react-router-dom";
 import { InfoIconSvg } from "../svg";
-import { useEffect } from "react";
-// import { IHomeDataContext } from "../context/DataContext";
 
 const Container = styled.article<{ bgPhoto: string }>`
   height: 100vh;
