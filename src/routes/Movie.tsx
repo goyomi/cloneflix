@@ -1,55 +1,51 @@
-import styled from "styled-components";
-import { makeImagePath } from "../utils";
 import Slider from "../components/Slider";
 import { MovieDataContext, MovieProvider } from "../context/DataContext";
+import { useEffect, useState } from "react";
+import Loading from "../components/Loading";
+import Banner from "../components/Banner";
+import { HomeContainer, IRandomContentResult } from "./Home";
+import { IData } from "../type";
 
-const HomeContainer = styled.div`
-  background-color: black;
-`;
-
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10rem;
-`;
-
-const Banner = styled.article<{ bgPhoto: string }>`
-  height: 100vh;
-  padding: 6rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(${(props) => props.bgPhoto});
-  background-size: cover;
-`;
-
-const Title = styled.h2`
-  font-size: 5.4rem;
-  margin-bottom: 2rem;
-`;
-
-const Overview = styled.p`
-  width: 50%;
-  font-size: 1.6rem;
-  line-height: calc(1.6rem * 1.3);
-`;
+interface IExtendRandomContentResult extends Omit<IRandomContentResult, "randomContentSection"> {
+  randomContentCategory: string;
+}
 
 function Movie() {
   const { nowPlayingData, popularData, topRatedData, upcomingData, isLoading } = MovieProvider();
+  const [randomContentData, setRandomContentData] = useState<IExtendRandomContentResult | null>(null);
+  const getRandomContent = (): IExtendRandomContentResult | null => {
+    if (!nowPlayingData?.results || !popularData?.results || !topRatedData?.results || !upcomingData?.results)
+      return null;
+    const allContent = [
+      ...nowPlayingData.results.map((result: IData) => ({ ...result, source: "now_playing" })),
+      ...popularData.results.map((result: IData) => ({ ...result, source: "popular" })),
+      ...topRatedData.results.map((result: IData) => ({ ...result, source: "top_rated" })),
+      ...upcomingData.results.map((result: IData) => ({ ...result, source: "upcoming" })),
+    ];
+    if (allContent.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * allContent.length);
+    const randomContent = allContent[randomIndex];
+    const randomContentCategory = randomContent.source;
+    return { randomContent, randomContentCategory };
+  };
+
+  useEffect(() => {
+    const randomContentResult = getRandomContent();
+    setRandomContentData(randomContentResult);
+  }, [nowPlayingData, popularData, topRatedData, upcomingData]);
+
+  const { randomContent, randomContentCategory } = randomContentData || {};
 
   return (
     <MovieDataContext.Provider value={{ nowPlayingData, popularData, topRatedData, upcomingData, isLoading }}>
       <HomeContainer>
         {isLoading ? (
-          <Loader>Loading...</Loader>
+          <Loading />
         ) : (
           <>
-            <Banner bgPhoto={makeImagePath(nowPlayingData?.results[0].backdrop_path || "")}>
-              <Title>{nowPlayingData?.results[0].title}</Title>
-              <Overview>{nowPlayingData?.results[0].overview}</Overview>
-            </Banner>
+            {randomContent && randomContentCategory && (
+              <Banner getRandomContent={() => randomContent} section="movie" category={randomContentCategory} />
+            )}
             <Slider title="Now Playing" section="movie" category="now_playing" />
             <Slider title="Popular" section="movie" category="popular" />
             <Slider title="Top Rated" section="movie" category="top_rated" />

@@ -6,11 +6,11 @@ import Loading from "../components/Loading";
 import { useEffect, useState } from "react";
 import { IData } from "../type";
 
-const HomeContainer = styled.div`
+export const HomeContainer = styled.div`
   background-color: black;
 `;
 
-interface IRandomContentResult {
+export interface IRandomContentResult {
   randomContent: IData;
   randomContentSection: string;
 }
