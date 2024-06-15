@@ -6,7 +6,7 @@ import Banner from "../components/Banner";
 import { HomeContainer, IRandomContentResult } from "./Home";
 import { IData } from "../type";
 
-interface IExtendRandomContentResult extends Omit<IRandomContentResult, "randomContentSection"> {
+export interface IExtendRandomContentResult extends Omit<IRandomContentResult, "randomContentSection"> {
   randomContentCategory: string;
 }
 

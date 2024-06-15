@@ -1,55 +1,47 @@
-import styled from "styled-components";
-import { makeImagePath } from "../utils";
 import Slider from "../components/Slider";
 import { TvShowDataContext, TvShowProvider } from "../context/DataContext";
-
-const HomeContainer = styled.div`
-  background-color: black;
-`;
-
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10rem;
-`;
-
-const Banner = styled.article<{ bgPhoto: string }>`
-  height: 100vh;
-  padding: 6rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(${(props) => props.bgPhoto});
-  background-size: cover;
-`;
-
-const Title = styled.h2`
-  font-size: 5.4rem;
-  margin-bottom: 2rem;
-`;
-
-const Overview = styled.p`
-  width: 50%;
-  font-size: 1.6rem;
-  line-height: calc(1.6rem * 1.3);
-`;
+import Loading from "../components/Loading";
+import { HomeContainer } from "./Home";
+import Banner from "../components/Banner";
+import { useEffect, useState } from "react";
+import { IExtendRandomContentResult } from "./Movie";
+import { IData } from "../type";
 
 function Tv() {
   const { airingTodayData, onTheAirData, tvPopularData, tvTopRatedData, isLoading } = TvShowProvider();
+  const [randomContentData, setRandomContentData] = useState<IExtendRandomContentResult | null>(null);
+  const getRandomContent = (): IExtendRandomContentResult | null => {
+    if (!airingTodayData?.results || !onTheAirData?.results || !tvPopularData?.results || !tvTopRatedData?.results)
+      return null;
+    const allContent = [
+      ...airingTodayData.results.map((result: IData) => ({ ...result, source: "airing_today" })),
+      ...onTheAirData.results.map((result: IData) => ({ ...result, source: "on_the_air" })),
+      ...tvPopularData.results.map((result: IData) => ({ ...result, source: "popular" })),
+      ...tvTopRatedData.results.map((result: IData) => ({ ...result, source: "top_rated" })),
+    ];
+    if (allContent.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * allContent.length);
+    const randomContent = allContent[randomIndex];
+    const randomContentCategory = randomContent.source;
+    return { randomContent, randomContentCategory };
+  };
 
+  useEffect(() => {
+    const randomContentResult = getRandomContent();
+    setRandomContentData(randomContentResult);
+  }, [airingTodayData, onTheAirData, tvPopularData, tvTopRatedData]);
+
+  const { randomContent, randomContentCategory } = randomContentData || {};
   return (
     <TvShowDataContext.Provider value={{ airingTodayData, onTheAirData, tvPopularData, tvTopRatedData, isLoading }}>
       <HomeContainer>
         {isLoading ? (
-          <Loader>Loading...</Loader>
+          <Loading />
         ) : (
           <>
-            <Banner bgPhoto={makeImagePath(airingTodayData?.results[0].backdrop_path || "")}>
-              <Title>{airingTodayData?.results[0].title}</Title>
-              <Overview>{airingTodayData?.results[0].overview}</Overview>
-            </Banner>
+            {randomContent && randomContentCategory && (
+              <Banner getRandomContent={() => randomContent} section="tv" category={randomContentCategory} />
+            )}
             <Slider title="Airing Today" section="tv" category="airing_today" />
             <Slider title="On The Air" section="tv" category="on_the_air" />
             <Slider title="Popular" section="tv" category="popular" />
