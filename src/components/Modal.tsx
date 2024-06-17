@@ -8,7 +8,7 @@ import ContentInformation from "./ModalContents/ContentInformation";
 import CastMember from "./ModalContents/CastMember";
 import SimilarContent from "./ModalContents/SimilarContent";
 import styled from "styled-components";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Overlay = styled(motion.div)`
   width: 100%;
@@ -54,16 +54,19 @@ function Modal({ clickedCard }: { clickedCard: IData | null }) {
   const { data: detailData } = useQuery<IDetailData>({
     queryKey: [section, category, "detail", id],
     queryFn: () => getContentDetail(section, id),
+    enabled: !!section && !!id,
   });
 
   const { data: creditsData } = useQuery<ICredits>({
     queryKey: [section, category, "credits", id],
     queryFn: () => getContentCredits(section, id),
+    enabled: !!section && !!id,
   });
 
   const { data: similarData } = useQuery<ISimilar>({
     queryKey: [section, category, "similar", id],
     queryFn: () => getContentSimilar(section, id),
+    enabled: !!section && !!id,
   });
 
   // 스크롤 초기화
