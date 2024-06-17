@@ -164,7 +164,7 @@ function Slider({ title, section, category }: ISlider) {
           >
             {data?.results.slice(offset * index, offset * index + offset).map((result: IData, idx) => (
               <ContentImage
-                key={result.id || idx}
+                key={`${result.id}-${section}-${category}-${idx}`}
                 result={result}
                 section={section}
                 category={category}

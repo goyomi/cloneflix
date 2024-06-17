@@ -110,8 +110,8 @@ function ContentInformation({ clickedCard, detailData }: { clickedCard: IData; d
         </DetailInfoList>
         <GenreList>
           {detailData.genres.map((val, idx) => (
-            <li>
-              <h4 key={idx}>{val.name}</h4>
+            <li key={`${val.id}-${idx}`}>
+              <h4>{val.name}</h4>
             </li>
           ))}
         </GenreList>

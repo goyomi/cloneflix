@@ -60,7 +60,7 @@ function ContentImage({ result, section, category, title }: IContentImageProps) 
   return (
     <Card
       onClick={() => onCardClicked(result.id)}
-      key={result.id}
+      key={`${result.id}-${title}`}
       variants={cardVariants}
       initial="normal"
       whileHover="hover"
