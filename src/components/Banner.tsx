@@ -4,13 +4,13 @@ import { IData } from "../type";
 import { useNavigate } from "react-router-dom";
 import { InfoIconSvg } from "../svg";
 
-const Container = styled.article<{ bgPhoto: string }>`
+const Container = styled.article<{ $bgPhoto: string }>`
   height: 100vh;
   padding: 6rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(${(props) => props.bgPhoto});
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(${(props) => props.$bgPhoto});
   background-size: cover;
 `;
 
@@ -62,7 +62,7 @@ function Banner({ getRandomContent, section, category }: IBannerProps) {
   const onCardClicked = () => navigate(`/${section}/${category}/${randomContent.id}`);
 
   return (
-    <Container bgPhoto={makeImagePath(randomContent.backdrop_path || "")}>
+    <Container $bgPhoto={makeImagePath(randomContent.backdrop_path || "")}>
       <ContentWrapper>
         <Title>{randomContent.title || randomContent.name}</Title>
         <Overview>{randomContent.overview}</Overview>
