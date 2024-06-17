@@ -42,10 +42,10 @@ function Tv() {
             {randomContent && randomContentCategory && (
               <Banner getRandomContent={() => randomContent} section="tv" category={randomContentCategory} />
             )}
-            <Slider title="Airing Today" section="tv" category="airing_today" />
-            <Slider title="On The Air" section="tv" category="on_the_air" />
-            <Slider title="Popular" section="tv" category="popular" />
-            <Slider title="Top Rated" section="tv" category="top_rated" />
+            <Slider title="Today On TV" section="tv" category="airing_today" />
+            <Slider title="Live Broadcast Shows" section="tv" category="on_the_air" />
+            <Slider title="Most Popular Shows" section="tv" category="popular" />
+            <Slider title="Best Reviewed TVShows" section="tv" category="top_rated" />
           </>
         )}
       </HomeContainer>

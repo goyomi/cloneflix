@@ -46,10 +46,10 @@ function Movie() {
             {randomContent && randomContentCategory && (
               <Banner getRandomContent={() => randomContent} section="movie" category={randomContentCategory} />
             )}
-            <Slider title="Now Playing" section="movie" category="now_playing" />
-            <Slider title="Popular" section="movie" category="popular" />
-            <Slider title="Top Rated" section="movie" category="top_rated" />
-            <Slider title="Upcoming" section="movie" category="upcoming" />
+            <Slider title="Now Showing Movies" section="movie" category="now_playing" />
+            <Slider title="Most Popular Movies" section="movie" category="popular" />
+            <Slider title="Best Reviewed Movies" section="movie" category="top_rated" />
+            <Slider title="Soon To Be Released Movies" section="movie" category="upcoming" />
           </>
         )}
       </HomeContainer>
