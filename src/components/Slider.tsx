@@ -150,7 +150,7 @@ function Slider({ title, section, category }: ISlider) {
       <SliderContainer>
         <SliderTitle>{title}</SliderTitle>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={direction}>
-          <IndexButton onClick={() => variationIndex("left")} way={"left"}>
+          <IndexButton key="left" onClick={() => variationIndex("left")} way={"left"}>
             {"<"}
           </IndexButton>
           <Row
@@ -164,7 +164,7 @@ function Slider({ title, section, category }: ISlider) {
           >
             {data?.results.slice(offset * index, offset * index + offset).map((result: IData, idx) => (
               <ContentImage
-                key={`${result.id}-${section}-${category}-${idx}`}
+                key={`${result.id}-${title}`}
                 result={result}
                 section={section}
                 category={category}
@@ -172,7 +172,7 @@ function Slider({ title, section, category }: ISlider) {
               />
             ))}
           </Row>
-          <IndexButton onClick={() => variationIndex("right")} way={"right"}>
+          <IndexButton key="right" onClick={() => variationIndex("right")} way={"right"}>
             {">"}
           </IndexButton>
         </AnimatePresence>
