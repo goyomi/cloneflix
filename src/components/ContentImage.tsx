@@ -16,9 +16,10 @@ const Card = styled(motion.div)`
   }
 `;
 
-const MovieImage = styled(motion.img)<{ src: string }>`
+const MovieImage = styled(motion.div)<{ $backgroundPath: string }>`
   width: 100%;
   aspect-ratio: 16 / 9;
+  background: url(${(props) => props.$backgroundPath}) no-repeat center / cover;
 `;
 
 const Info = styled(motion.h4)`
@@ -67,7 +68,7 @@ function ContentImage({ result, section, category, title }: IContentImageProps) 
       transition={{ type: "tween" }}
       layoutId={result.id + title}
     >
-      <MovieImage src={makeImagePath(result.backdrop_path)} />
+      <MovieImage $backgroundPath={makeImagePath(result.backdrop_path)} />
       <Info variants={infoVariants}>{result.title || result.name}</Info>
     </Card>
   );
