@@ -9,6 +9,9 @@ const SearchContainer = styled.div`
   margin-top: 8rem;
   width: 100%;
   padding: 0 2rem 2rem;
+  & > section:nth-of-type(2) {
+    margin-top: 0;
+  }
 `;
 
 const SearchTitle = styled.h2`
