@@ -4,45 +4,53 @@ import { makeImagePath } from "../utils";
 
 const SearchContentWrapper = styled.section`
   width: 100%;
-  margin-top: 2rem;
-  .section-title {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
+  margin: 2rem 0 4rem;
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
 `;
 
 const ContentCardList = styled.ul`
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 20rem;
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
 `;
 
 const ContentCard = styled.li`
-  .content_image {
-    width: 100%;
-    height: 15rem;
-    object-fit: cover;
+  overflow: hidden;
+`;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.7rem;
-    color: currentColor;
-  }
-  .content_title {
-    display: block;
-    width: 100%;
-    height: 5rem;
-    padding: 1.5rem;
-    font-size: 1.5rem;
-    line-height: 2rem;
-    text-align: center;
-    background-color: #2f2f2f;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
+const ContentImage = styled.div<{ $backgroundPath: string }>`
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: url(${(props) => props.$backgroundPath}) no-repeat center / cover;
+`;
+
+const NoImage = styled.div`
+  width: 100%;
+  min-height: 15rem;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  color: currentColor;
+`;
+
+const ContentTitle = styled.span`
+  display: block;
+  width: 100%;
+  height: 5rem;
+  padding: 1.5rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  text-align: center;
+  background-color: #2f2f2f;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 interface ISearchContentProps {
@@ -55,20 +63,16 @@ function SearchContent({ movieSearchData, tvSearchData, section }: ISearchConten
   const selectData = section === "movie" ? movieSearchData : tvSearchData;
   return (
     <SearchContentWrapper>
-      <h3 className="section-title">{section === "movie" ? "Movie" : "TV Show"}</h3>
+      <SectionTitle className="section-title">{section === "movie" ? "Movie" : "TV Show"}</SectionTitle>
       <ContentCardList>
         {selectData?.results.map((content, idx) => (
           <ContentCard key={idx}>
             {content.backdrop_path ? (
-              <img
-                className="content_image"
-                src={makeImagePath(content.backdrop_path)}
-                alt={content.name || content.title}
-              />
+              <ContentImage className="content_image" $backgroundPath={makeImagePath(content.backdrop_path)} />
             ) : (
-              <div className="content_image">"No Image"</div>
+              <NoImage className="content_image">"No Image"</NoImage>
             )}
-            <span className="content_title">{content.name || content.title}</span>
+            <ContentTitle className="content_title">{content.name || content.title}</ContentTitle>
           </ContentCard>
         ))}
       </ContentCardList>
