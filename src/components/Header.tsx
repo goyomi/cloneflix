@@ -97,21 +97,25 @@ interface IForm {
 
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [onFocus, setOnFocus] = useState(false);
+
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("/tv");
   const movieMatch = useMatch("/movie");
   const inputAnimation = useAnimation();
   const scrollAnimation = useAnimation();
   const { scrollY } = useScroll();
+
+  const { register, handleSubmit, watch } = useForm<IForm>();
+  const keyword = watch("keyword");
+
   useEffect(() => {
-    scrollY.onChange(() => {
-      if (scrollY.get() > 30) {
-        scrollAnimation.start("scroll");
-      } else {
-        scrollAnimation.start("top");
-      }
-    });
-  }, [scrollY, scrollAnimation]);
+    if (onFocus || keyword) {
+      scrollAnimation.start("scroll");
+    } else {
+      scrollAnimation.start(scrollY.get() > 30 ? "scroll" : "top");
+    }
+  }, [onFocus, scrollAnimation, scrollY, keyword]);
 
   const openSearch = () => {
     if (searchOpen) {
@@ -123,10 +127,13 @@ function Header() {
   };
 
   const history = useNavigate();
-  const { register, handleSubmit } = useForm<IForm>();
+
   const onValid = (data: IForm) => {
     history(`/search?keyword=${data.keyword}`);
   };
+
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => setOnFocus(true);
+  const handleOnBlur = (event: React.FocusEvent<HTMLInputElement>) => setOnFocus(false);
 
   return (
     <Nav variants={navVariants} initial="top" animate={scrollAnimation}>
@@ -161,6 +168,8 @@ function Header() {
         <SearchBar onSubmit={handleSubmit(onValid)}>
           <Input
             {...register("keyword", { required: true, minLength: 2 })}
+            onFocus={handleFocus}
+            onBlur={handleOnBlur}
             animate={{ scaleX: searchOpen ? 1 : 0 }}
             transition={{ ease: "linear" }}
             type="text"
