@@ -27,6 +27,11 @@ const Overview = styled.p`
   margin: 2rem 0;
   font-size: 2rem;
   line-height: calc(2rem * 1.3);
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const InfoButton = styled.button`
