@@ -6,6 +6,7 @@ import { useMatch } from "react-router-dom";
 import Modal from "./Modal";
 import { HomeDataContext, MovieDataContext, TvShowDataContext } from "../context/DataContext";
 import ContentImage from "./ContentImage";
+import SliderPagination from "./SliderPagination";
 
 const SliderContainer = styled.section`
   position: relative;
@@ -25,9 +26,9 @@ const IndexButton = styled(motion.button)<{ way: string }>`
   position: absolute;
   left: ${(props) => props.way === "left" && 0};
   right: ${(props) => props.way === "right" && 0};
-  top: 16.5rem;
+  top: 18.6rem;
   transform: translateY(-50%);
-  height: 20rem;
+  height: 18.3rem;
   font-size: 5rem;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 10;
@@ -120,12 +121,13 @@ function Slider({ title, section, category }: ISlider) {
     }
   }
 
+  const totalMovie = data?.results?.length ?? 0;
+  const maxIndex = Math.floor((totalMovie - 1) / offset);
   const variationIndex = (way: string) => {
     if (leaving || !data) return;
     toggleLeaving();
     setDirection(way);
-    const totalMovie = data.results.length;
-    const maxIndex = Math.floor((totalMovie - 1) / offset);
+
     setIndex((prev) => {
       if (way === "right") {
         return prev === maxIndex ? 0 : prev + 1;
@@ -149,6 +151,7 @@ function Slider({ title, section, category }: ISlider) {
     <>
       <SliderContainer>
         <SliderTitle>{title}</SliderTitle>
+        <SliderPagination maxIndex={maxIndex} currentPage={index} />
         <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={direction}>
           <IndexButton key="left" onClick={() => variationIndex("left")} way={"left"}>
             {"<"}
@@ -162,7 +165,7 @@ function Slider({ title, section, category }: ISlider) {
             transition={{ type: "tween", duration: 0.8, ease: "linear" }}
             key={index}
           >
-            {data?.results.slice(offset * index, offset * index + offset).map((result: IData, idx) => (
+            {data?.results.slice(offset * index, offset * index + offset).map((result: IData) => (
               <ContentImage
                 key={`${result.id}-${title}`}
                 result={result}
