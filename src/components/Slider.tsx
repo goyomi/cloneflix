@@ -11,10 +11,6 @@ import SliderPagination from "./SliderPagination";
 const SliderContainer = styled.section`
   position: relative;
   top: -10rem;
-  margin-bottom: 20.5rem;
-  &:last-child {
-    margin-bottom: 0;
-  }
 `;
 
 const SliderTitle = styled.h3`
@@ -22,21 +18,28 @@ const SliderTitle = styled.h3`
   font-size: 2.5rem;
 `;
 
+const RowContainer = styled.div`
+  position: relative;
+`;
+
 const IndexButton = styled(motion.button)<{ way: string }>`
   position: absolute;
+  top: 0;
+  bottom: 0;
   left: ${(props) => props.way === "left" && 0};
   right: ${(props) => props.way === "right" && 0};
-  top: 18.6rem;
-  transform: translateY(-50%);
-  height: 18.3rem;
+  height: calc(100% - 5rem); // h4 높이 빼기
   font-size: 5rem;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `;
 
 const Row = styled(motion.div)`
   width: 100%;
-  position: absolute;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
@@ -152,33 +155,35 @@ function Slider({ title, section, category }: ISlider) {
       <SliderContainer>
         <SliderTitle>{title}</SliderTitle>
         <SliderPagination maxIndex={maxIndex} currentPage={index} />
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={direction}>
+        <RowContainer>
           <IndexButton key="left" onClick={() => variationIndex("left")} way={"left"}>
             {"<"}
           </IndexButton>
-          <Row
-            variants={rowVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            custom={direction}
-            transition={{ type: "tween", duration: 0.8, ease: "linear" }}
-            key={index}
-          >
-            {data?.results.slice(offset * index, offset * index + offset).map((result: IData) => (
-              <ContentImage
-                key={`${result.id}-${title}`}
-                result={result}
-                section={section}
-                category={category}
-                title={title}
-              />
-            ))}
-          </Row>
+          <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={direction}>
+            <Row
+              variants={rowVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              custom={direction}
+              transition={{ type: "tween", duration: 0.8, ease: "linear" }}
+              key={index}
+            >
+              {data?.results.slice(offset * index, offset * index + offset).map((result: IData) => (
+                <ContentImage
+                  key={`${result.id}-${title}`}
+                  result={result}
+                  section={section}
+                  category={category}
+                  title={title}
+                />
+              ))}
+            </Row>
+          </AnimatePresence>
           <IndexButton key="right" onClick={() => variationIndex("right")} way={"right"}>
             {">"}
           </IndexButton>
-        </AnimatePresence>
+        </RowContainer>
       </SliderContainer>
       <Modal clickedCard={clickedCard} />
     </>
