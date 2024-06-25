@@ -19,23 +19,23 @@ const SliderTitle = styled.h3`
 `;
 
 const RowContainer = styled.div`
+  min-height: 18rem;
   position: relative;
+  margin-bottom: 2rem;
 `;
 
 const IndexButton = styled(motion.button)<{ way: string }>`
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 0;
   bottom: 0;
-  left: ${(props) => props.way === "left" && 0};
-  right: ${(props) => props.way === "right" && 0};
-  height: calc(100% - 5rem); // h4 높이 빼기
+  ${(props) => (props.way === "left" ? "left: 0;" : "right: 0;")}
   font-size: 5rem;
-  background-color: rgba(0, 0, 0, 0.5);
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
 `;
 
 const Row = styled(motion.div)`
@@ -43,6 +43,8 @@ const Row = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
+  position: absolute;
+  top: 0;
 `;
 
 const rowVariants = {
