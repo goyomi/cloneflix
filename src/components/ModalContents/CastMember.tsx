@@ -10,10 +10,10 @@ export const CreditWrapper = styled.section`
   flex-direction: column;
   justify-content: space-between;
   gap: 1rem;
+`;
 
-  .title {
-    font-size: 2.3rem;
-  }
+const Title = styled.h2`
+  font-size: 2.3rem;
 `;
 
 export const MemberWrapper = styled.div`
@@ -24,20 +24,6 @@ export const MemberWrapper = styled.div`
 `;
 
 export const MemberCard = styled.span`
-  .content_image {
-    margin-bottom: 1rem;
-    aspect-ratio: 1 / 1.5;
-    background-position: center center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-color: black;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.7rem;
-    color: currentColor;
-  }
   span {
     display: block;
     margin-bottom: 1rem;
@@ -46,6 +32,23 @@ export const MemberCard = styled.span`
   span:nth-child(2) {
     font-weight: bold;
   }
+`;
+
+const ContentImage = styled.div`
+  margin-bottom: 1rem;
+  aspect-ratio: 1 / 1.5;
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: black;
+`;
+
+const NoImage = styled(ContentImage)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  color: currentColor;
 `;
 
 const AccordionButton = styled.button`
@@ -70,13 +73,15 @@ function CastMember({ creditsData }: { creditsData: ICredits }) {
   console.log(isExpanded);
   return (
     <CreditWrapper>
-      <h2 className="title">Cast Members</h2>
+      <Title>Cast Members</Title>
       <MemberWrapper>
         {visibleCard.map((member, idx) => (
           <MemberCard key={idx}>
-            <div className="content_image" style={{ backgroundImage: `url(${makeImagePath(member.profile_path)})` }}>
-              {!member.profile_path && "No Image"}
-            </div>
+            {member.profile_path ? (
+              <ContentImage style={{ backgroundImage: `url(${makeImagePath(member.profile_path)})` }} />
+            ) : (
+              <NoImage>"No Image"</NoImage>
+            )}
             <span>{member.name}</span>
             <span>{member.character}</span>
           </MemberCard>
