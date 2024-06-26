@@ -30,7 +30,7 @@ const ContentImage = styled.div<{ $backgroundPath: string }>`
 
 const NoImage = styled.div`
   width: 100%;
-  min-height: 15rem;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   display: flex;
   align-items: center;
