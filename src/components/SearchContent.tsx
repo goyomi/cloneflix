@@ -63,16 +63,16 @@ function SearchContent({ movieSearchData, tvSearchData, section }: ISearchConten
   const selectData = section === "movie" ? movieSearchData : tvSearchData;
   return (
     <SearchContentWrapper>
-      <SectionTitle className="section-title">{section === "movie" ? "Movie" : "TV Show"}</SectionTitle>
+      <SectionTitle>{section === "movie" ? "Movie" : "TV Show"}</SectionTitle>
       <ContentCardList>
         {selectData?.results.map((content, idx) => (
           <ContentCard key={idx}>
             {content.backdrop_path ? (
-              <ContentImage className="content_image" $backgroundPath={makeImagePath(content.backdrop_path)} />
+              <ContentImage $backgroundPath={makeImagePath(content.backdrop_path)} />
             ) : (
-              <NoImage className="content_image">"No Image"</NoImage>
+              <NoImage>"No Image"</NoImage>
             )}
-            <ContentTitle className="content_title">{content.name || content.title}</ContentTitle>
+            <ContentTitle>{content.name || content.title}</ContentTitle>
           </ContentCard>
         ))}
       </ContentCardList>
