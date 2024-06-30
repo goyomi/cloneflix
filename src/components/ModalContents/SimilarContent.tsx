@@ -29,17 +29,35 @@ const ContentCard = styled(MemberCard)`
   }
 `;
 
+const ContentImage = styled.div`
+  margin-bottom: 1rem;
+  aspect-ratio: 1 / 1.5;
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: black;
+`;
+
+const NoImage = styled(ContentImage)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  color: currentColor;
+`;
+
 function SimilarContent({ similarData, section }: { similarData: ISimilar; section: string }) {
-  console.log(similarData.results);
   return (
     <SimilarWrapper>
       <h2 className="title">Similar {section}</h2>
       <ContentWrapper>
         {similarData.results.slice(0, 6).map((data, idx) => (
           <ContentCard key={idx}>
-            <div className="content_image" style={{ backgroundImage: `url(${makeImagePath(data.poster_path)})` }}>
-              {!data.poster_path && "No Image"}
-            </div>
+            {data.poster_path ? (
+              <ContentImage style={{ backgroundImage: `url(${makeImagePath(data.poster_path)})` }} />
+            ) : (
+              <NoImage>"No Image"</NoImage>
+            )}
             <span className="title">{data.name || data.title}</span>
             <div className="text_wrapper">
               <span className="date">{data.release_date || data.first_air_date}</span>
