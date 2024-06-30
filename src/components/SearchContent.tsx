@@ -31,7 +31,6 @@ const ContentImage = styled.div<{ $backgroundPath: string }>`
 const NoImage = styled.div`
   width: 100%;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
   display: flex;
   align-items: center;
   justify-content: center;
