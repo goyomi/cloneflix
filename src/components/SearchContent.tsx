@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { ISearchData } from "../type";
-import { makeImagePath } from "../utils";
+import ContentWithImage from "./ContentWithImage";
 
 const SearchContentWrapper = styled.section`
   width: 100%;
@@ -22,20 +22,14 @@ const ContentCard = styled.li`
   overflow: hidden;
 `;
 
-const ContentImage = styled.div<{ $backgroundPath: string }>`
-  width: 100%;
+const customImageStyle = `
+  margin-bottom: 0;
   aspect-ratio: 16 / 9;
-  background: url(${(props) => props.$backgroundPath}) no-repeat center / cover;
 `;
 
-const NoImage = styled.div`
-  width: 100%;
+const customNoImageStyle = `
   aspect-ratio: 16 / 9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.7rem;
-  color: currentColor;
+  margin-bottom: 0;
 `;
 
 const ContentTitle = styled.span`
@@ -66,11 +60,11 @@ function SearchContent({ movieSearchData, tvSearchData, section }: ISearchConten
       <ContentCardList>
         {selectData?.results.map((content, idx) => (
           <ContentCard key={idx}>
-            {content.backdrop_path ? (
-              <ContentImage $backgroundPath={makeImagePath(content.backdrop_path)} />
-            ) : (
-              <NoImage>"No Image"</NoImage>
-            )}
+            <ContentWithImage
+              imagePath={content.backdrop_path}
+              customImageStyle={customImageStyle}
+              customNoImageStyle={customNoImageStyle}
+            />
             <ContentTitle>{content.name || content.title}</ContentTitle>
           </ContentCard>
         ))}

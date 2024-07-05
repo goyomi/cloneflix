@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { ICredits } from "../../type";
-import { makeImagePath } from "../../utils";
 import { useState } from "react";
+import ContentWithImage from "../ContentWithImage";
 
-export const CreditWrapper = styled.section`
+const CreditWrapper = styled.section`
   width: 100%;
   padding: 2rem;
   display: flex;
@@ -14,41 +14,27 @@ export const CreditWrapper = styled.section`
 
 const Title = styled.h2`
   font-size: 2.3rem;
+  text-transform: capitalize;
 `;
 
-export const MemberWrapper = styled.div`
+const MemberWrapper = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(6, 7.35vw);
   gap: 1rem;
 `;
 
-export const MemberCard = styled.span`
-  span {
-    display: block;
-    margin-bottom: 1rem;
-    font-size: 1.7rem;
-  }
-  span:nth-child(2) {
-    font-weight: bold;
-  }
-`;
-
-const ContentImage = styled.div`
+const MemberCard = styled.span`
+  display: block;
   margin-bottom: 1rem;
-  aspect-ratio: 1 / 1.5;
-  background-position: center center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-color: black;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.7rem;
+  line-height: calc(1.7rem * 1.2);
 `;
 
-const NoImage = styled(ContentImage)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.7rem;
-  color: currentColor;
+const BoldText = styled.span`
+  font-weight: bold;
 `;
 
 const AccordionButton = styled.button`
@@ -70,19 +56,14 @@ function CastMember({ creditsData }: { creditsData: ICredits }) {
   const toggleAccordion = () => setIsExpanded((prev) => !prev);
   const visibleCard = isExpanded ? creditsData.cast : creditsData.cast.slice(0, 6);
 
-  console.log(isExpanded);
   return (
     <CreditWrapper>
       <Title>Cast Members</Title>
       <MemberWrapper>
         {visibleCard.map((member, idx) => (
           <MemberCard key={idx}>
-            {member.profile_path ? (
-              <ContentImage style={{ backgroundImage: `url(${makeImagePath(member.profile_path)})` }} />
-            ) : (
-              <NoImage>"No Image"</NoImage>
-            )}
-            <span>{member.name}</span>
+            <ContentWithImage imagePath={member.profile_path} />
+            <BoldText>{member.name}</BoldText>
             <span>{member.character}</span>
           </MemberCard>
         ))}
